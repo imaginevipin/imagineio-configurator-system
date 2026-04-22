@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitchen Configurator</title>
+  <style>
+    /* ===== FONT FACE ===== */
+    @font-face { font-family: 'PP Neue Montreal'; src: url('../assets/fonts/PPNeueMontreal-Light.otf') format('opentype'); font-weight: 300; font-style: normal; }
+    @font-face { font-family: 'PP Neue Montreal'; src: url('../assets/fonts/PPNeueMontreal-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; }
+    @font-face { font-family: 'PP Neue Montreal'; src: url('../assets/fonts/PPNeueMontreal-Book.otf') format('opentype'); font-weight: 450; font-style: normal; }
+    @font-face { font-family: 'PP Neue Montreal'; src: url('../assets/fonts/PPNeueMontreal-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; }
+    @font-face { font-family: 'PP Neue Montreal'; src: url('../assets/fonts/PPNeueMontreal-SemiBold.otf') format('opentype'); font-weight: 600; font-style: normal; }
+    @font-face { font-family: 'PP Neue Montreal'; src: url('../assets/fonts/PPNeueMontreal-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; }
+
+    /* ===== DESIGN SYSTEM TOKENS ===== */
+    :root {
+      --surface-primary-default: #ec4e0b;
+      --surface-primary-default-hover: #bd3e09;
+      --surface-primary-default-subtle: #fbdcce;
+      --surface-primary-default-subtle-hover: #f7b89d;
+      --text-primary-default: #ec4e0b;
+      --text-primary-on-color: #ffffff;
+      --border-primary-default: #ec4e0b;
+      --border-primary-default-hover: #bd3e09;
+      --border-primary-default-subtle: #fbdcce;
+      --border-primary-default-subtle-hover: #f7b89d;
+      --border-primary-focus: #ec4e0b;
+      --icons-primary-default: #ec4e0b;
+      --icons-primary-on-color: #ffffff;
+
+      --surface-default: #ffffff;
+      --surface-page: #ffffff;
+      --surface-page-secondary: #f6f6f6;
+      --surface-default-secondary: #f6f6f6;
+      --surface-disabled-disabled: #cccccc;
+
+      --text-default-heading: #1a1a1a;
+      --text-default-body: #4d4d4d;
+      --text-default-caption: #7f7f7f;
+      --text-default-placeholder: #999999;
+      --text-primary-default: #ec4e0b;
+      --text-disabled-default: #999999;
+
+      --border-default: #f0f0f0;
+      --border-default-secondary: #e5e5e5;
+      --border-disabled-disabled: #cccccc;
+
+      --success-dot: #22c55e;
+
+      --br-100: 4px;
+      --br-200: 8px;
+
+      --s-100: 4px;
+      --s-200: 8px;
+      --s-300: 12px;
+      --s-400: 16px;
+      --s-500: 20px;
+      --s-600: 24px;
+      --s-700: 28px;
+      --s-800: 32px;
+
+      --z-base: 0;
+      --z-action-icons: 10;
+      --z-dropdown: 50;
+      --z-sticky-cta: 100;
+      --z-overlay: 200;
+
+      --font-primary: 'PP Neue Montreal', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+      --panel-width: 284px;
+      --toolbar-height: 52px;
+      --statusbar-height: 44px;
+    }
+
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-primary);
+      color: var(--text-default-body);
+      background: #eeecea;
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+    img { display: block; max-width: 100%; height: auto; }
+    button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+    ul { list-style: none; }
+
+    /* ===== FLOATING TOOLBAR (top-right pill) ===== */
+    .toolbar {
+      position: absolute;
+      top: var(--s-400);
+      right: var(--s-400);
+      background: var(--surface-default);
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--s-300);
+      gap: var(--s-200);
+      height: 48px;
+      z-index: 60;
+    }
+    .toolbar-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border-default-secondary);
+      margin: 0 var(--s-100);
+    }
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .toolbar-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--br-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-default-caption);
+      transition: background-color 150ms ease-out, color 150ms ease-out;
+    }
+    @media (hover: hover) {
+      .toolbar-btn:hover {
+        background: var(--surface-page-secondary);
+        color: var(--text-default-heading);
+      }
+    }
+    .toolbar-btn.is-active {
+      background: var(--surface-page-secondary);
+      color: var(--text-default-heading);
+      font-weight: 600;
+    }
+    .toolbar-btn:focus-visible {
+      outline: 2px solid var(--border-primary-focus);
+      outline-offset: 1px;
+    }
+    .toolbar-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .view-toggle {
+      display: flex;
+      align-items: center;
+      background: var(--surface-page-secondary);
+      border-radius: var(--br-100);
+      padding: 2px;
+      gap: 2px;
+    }
+    .view-btn {
+      height: 28px;
+      padding: 0 var(--s-300);
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-default-caption);
+      transition: background-color 150ms ease-out, color 150ms ease-out;
+    }
+    .view-btn.is-active {
+      background: var(--surface-default);
+      color: var(--text-default-heading);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .cta-generate {
+      height: 36px;
+      padding: 0 var(--s-500);
+      background: var(--surface-primary-default);
+      color: var(--text-primary-on-color);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--br-100);
+      display: flex;
+      align-items: center;
+      gap: var(--s-200);
+      transition: background-color 150ms ease-out;
+      white-space: nowrap;
+    }
+    @media (hover: hover) {
+      .cta-generate:hover { background: var(--surface-primary-default-hover); }
+    }
+    .cta-generate:focus-visible {
+      outline: 2px solid var(--border-primary-focus);
+      outline-offset: 2px;
+    }
+
+    /* ===== TOOLTIPS ===== */
+    [data-tooltip] { position: relative; }
+
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: calc(100% + 9px);
+      left: 50%;
+      transform: translateX(-50%) translateY(3px);
+      background: var(--text-default-heading);
+      color: #ffffff;
+      font-family: var(--font-primary);
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1;
+      white-space: nowrap;
+      padding: 5px 8px;
+      border-radius: var(--br-100);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 120ms ease-out, transform 120ms ease-out;
+      z-index: var(--z-dropdown);
+    }
+    [data-tooltip]::before {
+      content: '';
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 50%;
+      transform: translateX(-50%) translateY(3px);
+      border: 4px solid transparent;
+      border-bottom-color: var(--text-default-heading);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 120ms ease-out, transform 120ms ease-out;
+      z-index: var(--z-dropdown);
+    }
+    @media (hover: hover) {
+      [data-tooltip]:hover::after,
+      [data-tooltip]:focus-visible::after {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      [data-tooltip]:hover::before,
+      [data-tooltip]:focus-visible::before {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+
+    /* ===== MAIN BODY ===== */
+    .configurator-body {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ===== LEFT PANEL (floating over canvas) ===== */
+    .config-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: var(--panel-width);
+      background: var(--surface-default);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 50;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.10);
+    }
+
+    /* Panel header — logo + title */
+    .panel-header {
+      display: flex;
+      align-items: center;
+      gap: var(--s-200);
+      padding: var(--s-400) var(--s-400);
+      border-bottom: 1px solid var(--border-default);
+      flex-shrink: 0;
+    }
+    .panel-header-logo { width: 24px; height: 21px; display: flex; align-items: center; }
+    .panel-header-logo svg { width: 24px; height: 21px; }
+    .panel-header-sep { display: block; width: 1px; height: 18px; background: var(--border-default-secondary); margin: 0 2px; }
+    .panel-header-title { font-size: 14px; font-weight: 600; color: var(--text-default-heading); letter-spacing: -0.01em; }
+
+    .config-panel-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-default-secondary) transparent;
+      padding-bottom: var(--s-300);
+    }
+
+    /* ===== CHAT PANEL ===== */
+    .chat-panel {
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-default);
+    }
+    .chat-panel-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: var(--s-200);
+      padding: var(--s-300) var(--s-400);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-default-heading);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: background 150ms;
+    }
+    @media (hover: hover) {
+      .chat-panel-toggle:hover { background: var(--surface-page-secondary); }
+    }
+    .chat-panel-icon { font-size: 13px; line-height: 1; }
+    .chat-chevron { margin-left: auto; width: 16px; height: 16px; transition: transform 220ms ease; flex-shrink: 0; }
+    .chat-panel.is-open .chat-chevron { transform: rotate(180deg); }
+
+    .chat-panel-body {
+      display: none;
+      flex-direction: column;
+      height: 300px;
+    }
+    .chat-panel.is-open .chat-panel-body { display: flex; }
+
+    .chat-messages {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: var(--s-300) var(--s-400);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-200);
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-default-secondary) transparent;
+    }
+    .chat-msg {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-default-body);
+      padding: var(--s-300) var(--s-400);
+      background: var(--surface-page-secondary);
+      border-radius: var(--br-200);
+    }
+    .chat-msg.user {
+      background: var(--surface-primary-default-subtle);
+      color: var(--text-default-heading);
+      align-self: flex-end;
+      max-width: 88%;
+      border-bottom-right-radius: var(--br-100);
+    }
+
+    .chat-input-area {
+      padding: var(--s-300) var(--s-400);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      gap: var(--s-200);
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .chat-input {
+      flex: 1;
+      height: 40px;
+      padding: 0 var(--s-400);
+      border: 1px solid var(--border-default-secondary);
+      border-radius: 20px;
+      font-family: var(--font-primary);
+      font-size: 13px;
+      color: var(--text-default-body);
+      background: var(--surface-default);
+      outline: none;
+      transition: border-color 150ms;
+    }
+    .chat-input::placeholder { color: var(--text-default-placeholder); }
+    .chat-input:focus { border-color: var(--border-primary-focus); }
+    .chat-send {
+      width: 32px;
+      height: 32px;
+      background: var(--surface-primary-default);
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 150ms;
+    }
+    @media (hover: hover) {
+      .chat-send:hover { background: var(--surface-primary-default-hover); }
+    }
+    .chat-send svg { width: 14px; height: 14px; }
+    .config-panel-scroll::-webkit-scrollbar { width: 4px; }
+    .config-panel-scroll::-webkit-scrollbar-track { background: transparent; }
+    .config-panel-scroll::-webkit-scrollbar-thumb { background: var(--border-default-secondary); border-radius: 2px; }
+
+    /* ===== OPTION SECTION ===== */
+    .option-section {
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--s-400) var(--s-400) var(--s-500);
+    }
+    .option-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--text-default-caption);
+      text-transform: uppercase;
+      margin-bottom: var(--s-300);
+    }
+
+    /* ===== IMAGE SWATCH GRID ===== */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-200);
+    }
+    .swatch-grid--2col { grid-template-columns: repeat(2, 1fr); }
+    .swatch-grid--4col { grid-template-columns: repeat(4, 1fr); }
+
+    .img-swatch {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: var(--br-100);
+      overflow: hidden;
+      border: 1.5px solid var(--border-default-secondary);
+      cursor: pointer;
+      background: var(--surface-page-secondary);
+      transition: border-color 150ms ease-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .img-swatch img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+    .img-swatch svg {
+      width: 80%;
+      height: 80%;
+      pointer-events: none;
+    }
+    .img-swatch--wide {
+      aspect-ratio: 4/3;
+    }
+    @media (hover: hover) {
+      .img-swatch:hover { border-color: var(--border-primary-default-subtle-hover); }
+    }
+    .img-swatch.is-selected {
+      border: 2px solid var(--border-primary-default);
+    }
+    .img-swatch.is-selected::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(236, 78, 11, 0.05);
+      pointer-events: none;
+    }
+    .img-swatch:focus-visible {
+      outline: 2px solid var(--border-primary-focus);
+      outline-offset: 2px;
+    }
+    .img-swatch.is-multi-selected {
+      border: 2px solid var(--border-primary-default);
+    }
+
+    /* Checkmark badge for multi-select */
+    .img-swatch.is-multi-selected .check-badge {
+      display: flex;
+    }
+    .check-badge {
+      display: none;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 16px;
+      height: 16px;
+      background: var(--surface-primary-default);
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .check-badge svg { width: 10px; height: 10px; color: white; }
+
+    .swatch-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-default-caption);
+      text-align: center;
+      margin-top: var(--s-100);
+      line-height: 1.3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .swatch-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== MATERIAL SWATCH (for finishes) ===== */
+    .material-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-200);
+    }
+    .material-swatch {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: var(--br-100);
+      overflow: hidden;
+      border: 1.5px solid var(--border-default-secondary);
+      cursor: pointer;
+      transition: border-color 150ms ease-out;
+    }
+    .material-swatch img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .material-swatch svg {
+      width: 100%;
+      height: 100%;
+    }
+    .material-swatch:focus-visible { outline: 2px solid var(--border-primary-focus); outline-offset: 2px; }
+    @media (hover: hover) {
+      .material-swatch:hover { border-color: var(--border-primary-default-subtle-hover); }
+    }
+    .material-swatch.is-selected {
+      border: 2px solid var(--border-primary-default);
+    }
+
+    /* ===== DROPDOWN ===== */
+    .dropdown-wrapper {
+      position: relative;
+    }
+    .dropdown-select {
+      width: 100%;
+      height: 40px;
+      padding: 0 var(--s-300);
+      border: 1px solid var(--border-default-secondary);
+      border-radius: var(--br-100);
+      background: var(--surface-default);
+      font-family: var(--font-primary);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-default-body);
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234d4d4d' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+    .dropdown-select:focus {
+      outline: 2px solid var(--border-primary-focus);
+      outline-offset: 0;
+      border-color: var(--border-primary-default);
+    }
+
+    /* ===== PREVIEW AREA ===== */
+    .preview-zone {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      background: #eeecea;
+      z-index: 0;
+    }
+    .preview-canvas {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .kitchen-scene {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .kitchen-svg-wrapper {
+      width: min(760px, 90%);
+      height: min(560px, 85%);
+      position: relative;
+    }
+    .kitchen-svg-wrapper svg {
+      width: 100%;
+      height: 100%;
+    }
+
+
+    /* ===== FLOATING STATUS PILL (bottom-right) ===== */
+    .status-bar {
+      position: absolute;
+      bottom: var(--s-400);
+      right: var(--s-400);
+      background: var(--surface-default);
+      border-radius: 100px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      padding: var(--s-200) var(--s-400);
+      gap: var(--s-200);
+      z-index: 60;
+    }
+
+    .live-status {
+      display: flex;
+      align-items: center;
+      gap: var(--s-200);
+    }
+    .live-status-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text-default-caption);
+      text-transform: uppercase;
+    }
+    .live-status-divider {
+      width: 1px;
+      height: 12px;
+      background: var(--border-default-secondary);
+    }
+    .live-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success-dot);
+    }
+    .live-status-text {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--success-dot);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* ===== REDUCED MOTION ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== MAIN BODY ===== -->
+  <div class="configurator-body">
+
+  <!-- ===== FLOATING TOOLBAR (top-right) ===== -->
+  <div class="toolbar" role="toolbar" aria-label="Configurator tools">
+
+    <!-- View Mode Toggle -->
+    <div class="view-toggle" role="group" aria-label="View mode">
+      <button class="view-btn is-active" id="btn-2d" aria-pressed="true" onclick="setViewMode('2d')">2D</button>
+      <button class="view-btn" id="btn-3d" aria-pressed="false" onclick="setViewMode('3d')">3D</button>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- View toggles: Dimensions / Hide Walls / Hide Backsplash -->
+    <div class="toolbar-group" role="group" aria-label="Canvas toggles">
+      <button class="toolbar-btn" id="btn-dimensions" aria-label="Toggle dimensions" aria-pressed="false" data-tooltip="Dimensions" onclick="toggleDimensions()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="8" width="14" height="8" rx="1"/>
+          <path d="M2 8v8M2 8l1.5 2M2 8l-1.5 2"/>
+          <path d="M2 16l1.5-2M2 16l-1.5-2"/>
+          <path d="M5 5h14M5 5l2 1.5M5 5l2-1.5"/>
+          <path d="M19 5l-2 1.5M19 5l-2-1.5"/>
+        </svg>
+      </button>
+      <button class="toolbar-btn" id="btn-hide-walls" aria-label="Hide walls" aria-pressed="false" data-tooltip="Hide Walls" onclick="toggleWalls()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="5" width="18" height="14" rx="1"/>
+          <path d="M3 11h18"/>
+          <path d="M9 5v6M15 11v8"/>
+        </svg>
+      </button>
+      <button class="toolbar-btn" id="btn-hide-backsplash" aria-label="Hide backsplash" aria-pressed="false" data-tooltip="Hide Backsplash" onclick="toggleBacksplash()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="8" height="5" rx="0.5"/>
+          <rect x="13" y="3" width="8" height="5" rx="0.5"/>
+          <rect x="3" y="10" width="8" height="5" rx="0.5"/>
+          <rect x="13" y="10" width="8" height="5" rx="0.5"/>
+          <rect x="3" y="17" width="8" height="4" rx="0.5"/>
+          <rect x="13" y="17" width="8" height="4" rx="0.5"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Reset Camera -->
+    <div class="toolbar-group" role="group" aria-label="Camera">
+      <button class="toolbar-btn" aria-label="Reset camera" data-tooltip="Reset Camera" onclick="resetCamera()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Undo / Redo -->
+    <div class="toolbar-group" role="group" aria-label="History">
+      <button class="toolbar-btn" aria-label="Undo" data-tooltip="Undo" id="btn-undo" onclick="undo()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7h10a4 4 0 0 1 0 8H9"/>
+          <path d="M7 3l-4 4 4 4"/>
+        </svg>
+      </button>
+      <button class="toolbar-btn" aria-label="Redo" data-tooltip="Redo" id="btn-redo" onclick="redo()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 7H11a4 4 0 0 0 0 8h4"/>
+          <path d="M17 3l4 4-4 4"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Fullscreen -->
+    <div class="toolbar-group" role="group" aria-label="View">
+      <button class="toolbar-btn" aria-label="Fullscreen" data-tooltip="Fullscreen" onclick="toggleFullscreen()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+          <path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+          <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
+          <path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <button class="cta-generate" onclick="generateAssets()" aria-label="Generate Assets">
+      Generate Assets
+    </button>
+  </div><!-- /toolbar -->
+
+    <!-- ===== LEFT CONFIG PANEL ===== -->
+    <aside class="config-panel" role="complementary" aria-label="Kitchen configuration options">
+
+      <!-- Panel header: logo + title -->
+      <div class="panel-header">
+        <div class="panel-header-logo" aria-label="imagine.io">
+          <svg width="49" height="43" viewBox="0 0 49 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24.5005 28.666L36.3698 42.9993H48.9997L24.5005 28.666Z" fill="#919191"/>
+            <path d="M24.5002 28.666L24.453 28.694L0.000976562 42.9993H12.6309L24.5002 28.666Z" fill="#727272"/>
+            <path d="M24.5 28.667L29.6485 43.0003H36.3693L24.5 28.667Z" fill="#828282"/>
+            <path d="M24.5 43.0003H29.6485L24.5 28.667V43.0003Z" fill="#828282"/>
+            <path d="M19.3516 43.0003H24.5001V28.667L19.3516 43.0003Z" fill="#828282"/>
+            <path d="M24.5001 28.667L12.6309 43.0003H19.3516L24.5001 28.667Z" fill="#828282"/>
+            <path d="M24.5005 28.666L24.5344 28.6859L49.0002 42.9988L42.6847 31.9153L24.5005 28.666Z" fill="#D7D7D7"/>
+            <path d="M24.5005 28.6664L42.6847 31.9157L39.3244 26.0176L24.5005 28.6664Z" fill="#E6E6E6"/>
+            <path d="M24.5005 28.6667L39.3244 26.0178L36.7506 21.5L24.5005 28.6667Z" fill="#E6E6E6"/>
+            <path d="M36.7506 21.5002L34.1764 16.9824L24.5005 28.6669L36.7506 21.5002Z" fill="#E6E6E6"/>
+            <path d="M24.5005 28.6666L34.1764 16.9821L30.816 11.084L24.5005 28.6666Z" fill="#E6E6E6"/>
+            <path d="M24.5005 28.6661L30.816 11.0835L24.5005 0V28.6661Z" fill="#F6F6F6"/>
+            <path d="M0 42.9996L0.00106925 42.999H0V42.9996Z" fill="white"/>
+            <path d="M24.5001 28.6661V0L18.1846 11.0835L24.5001 28.6661Z" fill="#242424"/>
+            <path d="M24.5002 28.666L6.31599 31.9153L0.000488281 42.9988L24.5002 28.666Z" fill="#434343"/>
+            <path d="M24.4996 28.6656L18.1841 11.083L14.8237 16.9811L24.4996 28.6656Z" fill="#333333"/>
+            <path d="M14.8238 16.9814L12.2495 21.4992L24.4996 28.6659L14.8238 16.9814Z" fill="#333333"/>
+            <path d="M24.4996 28.6657L12.2495 21.499L9.67578 26.0168L24.4996 28.6657Z" fill="#333333"/>
+            <path d="M24.4997 28.6655L9.67581 26.0166L6.31543 31.9147L24.4997 28.6655Z" fill="#333333"/>
+            <g style="mix-blend-mode:color">
+              <mask id="mask1_panel" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="-1" width="49" height="44">
+                <g style="mix-blend-mode:difference">
+                  <path d="M36.3691 42.999H12.6309L24.5 28.665L36.3691 42.999ZM12.6309 42.998H0.000976562L24.4531 28.6934L24.5 28.665L12.6309 42.998ZM0.000976562 42.998L6.31641 31.9141L24.5 28.665L0.000976562 42.998ZM48.999 42.998H36.3691L24.5 28.665L48.999 42.998ZM30.8154 11.082L34.1758 16.9805L39.3242 26.0156L42.6846 31.9141L49 42.998L24.5342 28.6846L24.5 28.665L6.31543 31.9141L9.67578 26.0156L14.8242 16.9805L18.1846 11.082L24.5 -0.000976562L30.8154 11.082Z" fill="white"/>
+                </g>
+              </mask>
+              <g mask="url(#mask1_panel)">
+                <path d="M0 0H49V43H0V0Z" fill="#EC4E0B"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <span class="panel-header-sep" aria-hidden="true"></span>
+        <span class="panel-header-title">Kitchen Configurator</span>
+      </div>
+
+      <div class="config-panel-scroll">
+
+        <!-- LAYOUT -->
+        <section class="option-section" data-group="layout">
+          <h2 class="option-section-label">Layout</h2>
+          <div class="swatch-grid" role="radiogroup" aria-label="Layout">
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="L-Shaped" data-group="layout" data-option="l_shaped" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/01 Layout/l_shaped.svg" alt="L-Shaped layout">
+              </button>
+              <span class="swatch-label">L-Shaped</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch is-selected" role="radio" aria-checked="true" aria-label="U-Shaped" data-group="layout" data-option="u_shaped" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/01 Layout/u_shaped.svg" alt="U-Shaped layout">
+              </button>
+              <span class="swatch-label">U-Shaped</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="Galley" data-group="layout" data-option="galley" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/01 Layout/galley.svg" alt="Galley layout">
+              </button>
+              <span class="swatch-label">Galley</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="Single Wall" data-group="layout" data-option="single_wall" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/01 Layout/single_wall.svg" alt="Single Wall layout">
+              </button>
+              <span class="swatch-label">Single Wall</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ISLAND -->
+        <section class="option-section" data-group="island">
+          <h2 class="option-section-label">Island</h2>
+          <div class="swatch-grid" role="radiogroup" aria-label="Island configuration">
+            <div class="swatch-item">
+              <button class="img-swatch is-selected" role="radio" aria-checked="true" aria-label="No Island" data-group="island" data-option="none" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/02 Island/none.svg" alt="No Island">
+              </button>
+              <span class="swatch-label">No Island</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="Standard Island" data-group="island" data-option="standard" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/02 Island/standard.svg" alt="Standard Island">
+              </button>
+              <span class="swatch-label">Standard</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="Large Island" data-group="island" data-option="large" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/02 Island/large.svg" alt="Large Island">
+              </button>
+              <span class="swatch-label">Large</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- BASE CABINET -->
+        <section class="option-section" data-group="base_cabinet">
+          <h2 class="option-section-label">Base Cabinet</h2>
+          <div class="swatch-grid" role="group" aria-label="Base cabinet types (select multiple)">
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Single Door" data-group="base_cabinet" data-option="single_door" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/03 Base Cabinet/single_door.svg" alt="Single Door">
+              </button>
+              <span class="swatch-label">Single Door</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Single Door + Drawer" data-group="base_cabinet" data-option="single_door_drawer" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/03 Base Cabinet/single_door_drawer.svg" alt="Single Door + Drawer">
+              </button>
+              <span class="swatch-label">Single + Drawer</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Single 2 Drawer" data-group="base_cabinet" data-option="single_2_drawer" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/03 Base Cabinet/single_2_drawer.svg" alt="Single 2 Drawer">
+              </button>
+              <span class="swatch-label">2 Drawer</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Single 3 Drawer" data-group="base_cabinet" data-option="single_3_drawer" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/03 Base Cabinet/single_3_drawer.svg" alt="Single 3 Drawer">
+              </button>
+              <span class="swatch-label">3 Drawer</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Double Door" data-group="base_cabinet" data-option="double_door" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/03 Base Cabinet/double_door.svg" alt="Double Door">
+              </button>
+              <span class="swatch-label">Double Door</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Double Door + Drawer" data-group="base_cabinet" data-option="double_door_drawer" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/03 Base Cabinet/double_door_drawer.svg" alt="Double Door + Drawer">
+              </button>
+              <span class="swatch-label">Double + Drawer</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Double Door + 2 Drawer" data-group="base_cabinet" data-option="double_door_2_drawer" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/03 Base Cabinet/double_door_2_drawer.svg" alt="Double Door + 2 Drawer">
+              </button>
+              <span class="swatch-label">Double + 2 Draw</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Oven Cabinet" data-group="base_cabinet" data-option="base_oven_cabinet" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/03 Base Cabinet/base_oven_cabinet.svg" alt="Oven Cabinet">
+              </button>
+              <span class="swatch-label">Oven Cabinet</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- WALL CABINET -->
+        <section class="option-section" data-group="wall_cabinet">
+          <h2 class="option-section-label">Wall Cabinet</h2>
+          <div class="swatch-grid" role="group" aria-label="Wall cabinet types (select multiple)">
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Single Door Wall Cabinet" data-group="wall_cabinet" data-option="wall_single_door" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/04 Wall Cabinet/wall_single_door.svg" alt="Wall Single Door">
+              </button>
+              <span class="swatch-label">Single Door</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Double Door Wall Cabinet" data-group="wall_cabinet" data-option="wall_double_door" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/04 Wall Cabinet/wall_double_door.svg" alt="Wall Double Door">
+              </button>
+              <span class="swatch-label">Double Door</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Microwave Cabinet" data-group="wall_cabinet" data-option="wall_microwave" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/04 Wall Cabinet/wall_microwave_cabinet.svg" alt="Microwave Cabinet">
+              </button>
+              <span class="swatch-label">Microwave</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- TALL CABINET -->
+        <section class="option-section" data-group="tall_cabinet">
+          <h2 class="option-section-label">Tall Cabinet</h2>
+          <div class="swatch-grid" role="group" aria-label="Tall cabinet types (select multiple)">
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Tall Single Door" data-group="tall_cabinet" data-option="tall_single_door" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/05 Tall Cabinet/tall_single_door.svg" alt="Tall Single Door">
+              </button>
+              <span class="swatch-label">Single Door</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Tall Double Door" data-group="tall_cabinet" data-option="tall_double_door" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/05 Tall Cabinet/tall_double_door.svg" alt="Tall Double Door">
+              </button>
+              <span class="swatch-label">Double Door</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Tall Oven Cabinet" data-group="tall_cabinet" data-option="tall_oven" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/05 Tall Cabinet/tall_oven_cabinet.svg" alt="Tall Oven Cabinet">
+              </button>
+              <span class="swatch-label">Oven Cabinet</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Refrigerator Cabinet" data-group="tall_cabinet" data-option="tall_fridge" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/05 Tall Cabinet/tall_refrigerator_cabinet.svg" alt="Refrigerator Cabinet">
+              </button>
+              <span class="swatch-label">Refrigerator</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- DOOR STYLE -->
+        <section class="option-section" data-group="door_style">
+          <h2 class="option-section-label">Door Style</h2>
+          <div class="swatch-grid" role="radiogroup" aria-label="Door style">
+            <div class="swatch-item">
+              <button class="img-swatch is-selected" role="radio" aria-checked="true" aria-label="Slab" data-group="door_style" data-option="solid" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/06 Door Style/solid.svg" alt="Slab door style">
+              </button>
+              <span class="swatch-label">Slab</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="Shaker" data-group="door_style" data-option="fusion" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/06 Door Style/fusion.svg" alt="Shaker door style">
+              </button>
+              <span class="swatch-label">Shaker</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="Recessed Panel" data-group="door_style" data-option="galaxy" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/06 Door Style/galaxy.svg" alt="Recessed Panel door style">
+              </button>
+              <span class="swatch-label">Recessed</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="Raised Panel" data-group="door_style" data-option="onyx" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/06 Door Style/onyx.svg" alt="Raised Panel door style">
+              </button>
+              <span class="swatch-label">Raised Panel</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- DOOR HANDLE -->
+        <section class="option-section" data-group="door_handle">
+          <h2 class="option-section-label">Door Handle</h2>
+          <div class="swatch-grid" role="radiogroup" aria-label="Door handle style">
+            <div class="swatch-item">
+              <button class="img-swatch is-selected" role="radio" aria-checked="true" aria-label="No Handle" data-group="door_handle" data-option="none" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/07 Door Handle/none_2.svg" alt="No handle">
+              </button>
+              <span class="swatch-label">None</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="Knob" data-group="door_handle" data-option="knob" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/07 Door Handle/knob.svg" alt="Knob handle">
+              </button>
+              <span class="swatch-label">Knob</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="T-Bar" data-group="door_handle" data-option="t_bar" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/07 Door Handle/t_bar.svg" alt="T-Bar handle">
+              </button>
+              <span class="swatch-label">T Bar</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="D-Pulls" data-group="door_handle" data-option="d_pulls" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/07 Door Handle/d_pulls.svg" alt="D-Pulls handle">
+              </button>
+              <span class="swatch-label">D Pulls</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="Handle 4" data-group="door_handle" data-option="handle_4" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/07 Door Handle/handle_4.svg" alt="Handle 4">
+              </button>
+              <span class="swatch-label">Handle 4</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="Handle 5" data-group="door_handle" data-option="handle_5" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/07 Door Handle/handle_5.svg" alt="Handle 5">
+              </button>
+              <span class="swatch-label">Handle 5</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="radio" aria-checked="false" aria-label="Handle 6" data-group="door_handle" data-option="handle_6" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/07 Door Handle/handle_6.svg" alt="Handle 6">
+              </button>
+              <span class="swatch-label">Handle 6</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- APPLIANCES -->
+        <section class="option-section" data-group="appliances">
+          <h2 class="option-section-label">Appliances</h2>
+          <div class="swatch-grid" role="group" aria-label="Appliances (select multiple)">
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Kitchen Sink" data-group="appliances" data-option="sink" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/08 Appliances/sink.svg" alt="Kitchen Sink">
+              </button>
+              <span class="swatch-label">Kitchen Sink</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Freestanding Range" data-group="appliances" data-option="oven" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/08 Appliances/oven.svg" alt="Freestanding Range">
+              </button>
+              <span class="swatch-label">Range</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Dishwasher" data-group="appliances" data-option="dishwasher" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/08 Appliances/dishwasher.svg" alt="Dishwasher">
+              </button>
+              <span class="swatch-label">Dishwasher</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Refrigerator" data-group="appliances" data-option="refrigerator" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/08 Appliances/refrigerator.svg" alt="Refrigerator">
+              </button>
+              <span class="swatch-label">Refrigerator</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Microwave" data-group="appliances" data-option="microwave" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/08 Appliances/microwave.svg" alt="Microwave">
+              </button>
+              <span class="swatch-label">Microwave</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Stove" data-group="appliances" data-option="stove" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/08 Appliances/stove.svg" alt="Stove">
+              </button>
+              <span class="swatch-label">Stove</span>
+            </div>
+            <div class="swatch-item">
+              <button class="img-swatch" role="checkbox" aria-checked="false" aria-label="Range Hood" data-group="appliances" data-option="range_hood" tabindex="0">
+                <div class="check-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <img src="../Kitchen Configurator Brief/assets/08 Appliances/range_hood.svg" alt="Range Hood">
+              </button>
+              <span class="swatch-label">Range Hood</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- CABINET FINISH -->
+        <section class="option-section" data-group="cabinet_finish">
+          <h2 class="option-section-label">Cabinet Finish</h2>
+          <div class="material-grid" role="radiogroup" aria-label="Cabinet finish">
+            <div class="swatch-item">
+              <button class="material-swatch" role="radio" aria-checked="false" aria-label="Black Acrylic" data-group="cabinet_finish" data-option="black_acrylic" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/09 Cabinet Finish/acrylic_color.svg" alt="Black Acrylic finish">
+              </button>
+              <span class="swatch-label">Black Acrylic</span>
+            </div>
+            <div class="swatch-item">
+              <button class="material-swatch" role="radio" aria-checked="false" aria-label="White Metallic" data-group="cabinet_finish" data-option="white_metallic" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/09 Cabinet Finish/metallic_color.svg" alt="White Metallic finish">
+              </button>
+              <span class="swatch-label">White Metallic</span>
+            </div>
+            <div class="swatch-item">
+              <button class="material-swatch is-selected" role="radio" aria-checked="true" aria-label="Walnut" data-group="cabinet_finish" data-option="walnut" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/09 Cabinet Finish/wood1_basecolor.jpg" alt="Walnut finish">
+              </button>
+              <span class="swatch-label">Walnut</span>
+            </div>
+            <div class="swatch-item">
+              <button class="material-swatch" role="radio" aria-checked="false" aria-label="American Walnut" data-group="cabinet_finish" data-option="american_walnut" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/09 Cabinet Finish/wood2_basecolor.jpg" alt="American Walnut finish">
+              </button>
+              <span class="swatch-label">American Walnut</span>
+            </div>
+            <div class="swatch-item">
+              <button class="material-swatch" role="radio" aria-checked="false" aria-label="Mahogany" data-group="cabinet_finish" data-option="mahogany" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/09 Cabinet Finish/wood3_basecolor.jpg" alt="Mahogany finish">
+              </button>
+              <span class="swatch-label">Mahogany</span>
+            </div>
+            <div class="swatch-item">
+              <button class="material-swatch" role="radio" aria-checked="false" aria-label="White Oak" data-group="cabinet_finish" data-option="white_oak" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/09 Cabinet Finish/wood4_basecolor.jpg" alt="White Oak finish">
+              </button>
+              <span class="swatch-label">White Oak</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- COUNTERTOP FINISH -->
+        <section class="option-section" data-group="countertop_finish">
+          <h2 class="option-section-label">Counter Top Finish</h2>
+          <div class="material-grid" role="radiogroup" aria-label="Countertop finish">
+            <div class="swatch-item">
+              <button class="material-swatch is-selected" role="radio" aria-checked="true" aria-label="White Metallic Countertop" data-group="countertop_finish" data-option="white_metallic_ct" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/10 Counter Top Finish/diffuse.jpg" alt="White Metallic countertop">
+              </button>
+              <span class="swatch-label">White Metallic</span>
+            </div>
+            <div class="swatch-item">
+              <button class="material-swatch" role="radio" aria-checked="false" aria-label="Granite Countertop" data-group="countertop_finish" data-option="granite" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/10 Counter Top Finish/diffuse_2.jpg" alt="Granite countertop">
+              </button>
+              <span class="swatch-label">Granite</span>
+            </div>
+            <div class="swatch-item">
+              <button class="material-swatch" role="radio" aria-checked="false" aria-label="Stone Countertop" data-group="countertop_finish" data-option="stone" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/10 Counter Top Finish/diffuse_3.jpg" alt="Stone countertop">
+              </button>
+              <span class="swatch-label">Stone</span>
+            </div>
+            <div class="swatch-item">
+              <button class="material-swatch" role="radio" aria-checked="false" aria-label="Terrazzo Countertop" data-group="countertop_finish" data-option="terrazzo" tabindex="0">
+                <img src="../Kitchen Configurator Brief/assets/10 Counter Top Finish/metallic_color.svg" alt="Terrazzo countertop">
+              </button>
+              <span class="swatch-label">Terrazzo</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- HARDWARE FINISH -->
+        <section class="option-section" data-group="hardware_finish">
+          <h2 class="option-section-label">Hardware Finish</h2>
+          <div class="dropdown-wrapper">
+            <select class="dropdown-select" id="hardware-finish-select" aria-label="Hardware finish" onchange="handleDropdownChange('hardware_finish', this.value)">
+              <option value="brushed_nickel">Brushed Nickel</option>
+              <option value="polished_chrome">Polished Chrome</option>
+              <option value="matte_black">Matte Black</option>
+              <option value="oil_rubbed_bronze">Oil Rubbed Bronze</option>
+              <option value="satin_brass">Satin Brass</option>
+              <option value="antique_copper">Antique Copper</option>
+              <option value="polished_gold">Polished Gold</option>
+              <option value="stainless_steel">Stainless Steel</option>
+            </select>
+          </div>
+        </section>
+
+      </div><!-- /config-panel-scroll -->
+
+      <!-- Chat panel -->
+      <div class="chat-panel" id="chat-panel">
+        <button class="chat-panel-toggle" onclick="toggleChat()" aria-expanded="false" aria-controls="chat-body">
+          <span class="chat-panel-icon" aria-hidden="true">✦</span>
+          <span>Chat</span>
+          <svg class="chat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div class="chat-panel-body" id="chat-body" aria-hidden="true">
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-msg">Hi! 👋 How can I assist you today? You can ask me to change layouts, finishes, appliances, and more.</div>
+          </div>
+          <div class="chat-input-area">
+            <input class="chat-input" id="chat-input" type="text" placeholder="Type a message..." autocomplete="off" aria-label="Chat message"/>
+            <button class="chat-send" onclick="sendChat()" aria-label="Send message">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div><!-- /chat-panel -->
+
+    </aside><!-- /config-panel -->
+
+    <!-- ===== PREVIEW ZONE ===== -->
+    <main class="preview-zone" role="main" aria-label="Kitchen preview">
+      <div class="preview-canvas">
+        <div class="kitchen-scene" id="kitchen-scene">
+          <div class="kitchen-svg-wrapper" id="kitchen-render">
+            <!-- Dynamic kitchen illustration -->
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  <!-- ===== FLOATING STATUS PILL (bottom-right) ===== -->
+  <div class="status-bar" role="status" aria-label="System status: Stable">
+    <div class="live-status">
+      <span class="live-status-label">Live Status</span>
+      <span class="live-status-divider" aria-hidden="true"></span>
+      <span class="live-status-dot" aria-hidden="true"></span>
+      <span class="live-status-text">Stable</span>
+    </div>
+  </div><!-- /status-bar -->
+
+  </div><!-- /configurator-body -->
+
+  <script>
+    /* ===== STATE ===== */
+    const state = {
+      layout: 'u_shaped',
+      island: 'none',
+      baseCabinets: [],
+      wallCabinets: [],
+      tallCabinets: [],
+      doorStyle: 'solid',
+      doorHandle: 'none',
+      appliances: [],
+      cabinetFinish: 'walnut',
+      countertopFinish: 'white_metallic_ct',
+      hardwareFinish: 'brushed_nickel',
+      viewMode: '2d',
+      showDimensions: false,
+      showWalls: true,
+      showBacksplash: true
+    };
+
+    /* History for undo/redo */
+    const history = [JSON.stringify(state)];
+    let historyIndex = 0;
+
+    /* ===== CABINET FINISH COLORS (for scene rendering) ===== */
+    const finishColors = {
+      black_acrylic:   { base: '#1a1a1a', shadow: '#0d0d0d', light: '#2d2d2d' },
+      white_metallic:  { base: '#d4d4d4', shadow: '#b0b0b0', light: '#ebebeb' },
+      walnut:          { base: '#5c3a1e', shadow: '#3d2510', light: '#7a4e2d' },
+      american_walnut: { base: '#4a2e12', shadow: '#2e1a07', light: '#6b4420' },
+      mahogany:        { base: '#5b2333', shadow: '#3a1520', light: '#7a3045' },
+      white_oak:       { base: '#c8a97a', shadow: '#a07c4a', light: '#dfc49a' }
+    };
+
+    const countertopColors = {
+      white_metallic_ct: { base: '#e8e8e8', top: '#f2f2f2', edge: '#cccccc' },
+      granite:           { base: '#8c8c8c', top: '#9a9a9a', edge: '#707070' },
+      stone:             { base: '#b5a89a', top: '#c4b8aa', edge: '#9a8d80' },
+      terrazzo:          { base: '#e2ddd4', top: '#ece8e0', edge: '#c8c2b8' }
+    };
+
+    const layoutLabels = {
+      l_shaped: 'L-Shaped', u_shaped: 'U-Shaped', galley: 'Galley', single_wall: 'Single Wall'
+    };
+
+    /* ===== KITCHEN SCENE RENDERER ===== */
+    function renderKitchenScene() {
+      const wrapper = document.getElementById('kitchen-render');
+      const finish = finishColors[state.cabinetFinish] || finishColors.walnut;
+      const ct = countertopColors[state.countertopFinish] || countertopColors.white_metallic_ct;
+      const layoutName = layoutLabels[state.layout] || 'U-Shaped';
+      const islandType = state.island;
+
+      const wallColor = '#f5f4f2';
+      const floorColor = '#ddd9d4';
+      const tileColor = '#ffffff';
+
+      const cab = finish.base;
+      const cabShadow = finish.shadow;
+      const cabLight = finish.light;
+      const ctTop = ct.top;
+      const ctEdge = ct.edge;
+      const handleColor = getHandleColor();
+
+      /* Build SVG based on selected layout */
+      let sceneSVG = '';
+
+      if (state.layout === 'u_shaped') {
+        sceneSVG = renderUShape(cab, cabShadow, cabLight, ctTop, ctEdge, handleColor, wallColor, floorColor, tileColor, islandType);
+      } else if (state.layout === 'l_shaped') {
+        sceneSVG = renderLShape(cab, cabShadow, cabLight, ctTop, ctEdge, handleColor, wallColor, floorColor, tileColor, islandType);
+      } else if (state.layout === 'galley') {
+        sceneSVG = renderGalley(cab, cabShadow, cabLight, ctTop, ctEdge, handleColor, wallColor, floorColor, tileColor);
+      } else {
+        sceneSVG = renderSingleWall(cab, cabShadow, cabLight, ctTop, ctEdge, handleColor, wallColor, floorColor, tileColor);
+      }
+
+      wrapper.innerHTML = `<svg viewBox="0 0 760 560" xmlns="http://www.w3.org/2000/svg">${sceneSVG}</svg>`;
+    }
+
+    function getHandleColor() {
+      const hw = state.hardwareFinish;
+      const map = {
+        brushed_nickel: '#b0b0b0', polished_chrome: '#d4d4d4',
+        matte_black: '#2a2a2a', oil_rubbed_bronze: '#3d2a1a',
+        satin_brass: '#c8a830', antique_copper: '#b0652a',
+        polished_gold: '#e8c048', stainless_steel: '#c0c0c0'
+      };
+      return map[hw] || '#b0b0b0';
+    }
+
+    /* Draws a handle bar given door_handle state */
+    function handleBar(x, y, w, h, color) {
+      const type = state.doorHandle;
+      if (type === 'none') return '';
+      if (type === 'knob') {
+        const cx = x + w / 2, cy = y + h * 0.3;
+        return `<circle cx="${cx}" cy="${cy}" r="3" fill="${color}" opacity="0.9"/>`;
+      }
+      if (type === 't_bar' || type === 'd_pulls' || type.startsWith('handle_')) {
+        const bx = x + w * 0.2, bw = w * 0.6, by = y + h * 0.28;
+        return `<rect x="${bx}" y="${by}" width="${bw}" height="2.5" rx="1.25" fill="${color}" opacity="0.9"/>`;
+      }
+      return '';
+    }
+
+    /* Draw a base cabinet unit */
+    function drawBaseCab(x, y, w, h, cab, cabShadow, cabLight, ctTop, ctEdge, handleColor) {
+      const doors = w > 60 ? 2 : 1;
+      const doorW = (w - 4) / doors;
+      let doors_svg = '';
+      for (let d = 0; d < doors; d++) {
+        const dx = x + 2 + d * doorW;
+        doors_svg += `<rect x="${dx}" y="${y + 4}" width="${doorW - 1}" height="${h - 14}" rx="1" fill="${cab}" stroke="${cabShadow}" stroke-width="0.5" opacity="0.9"/>`;
+        doors_svg += handleBar(dx, y + 4, doorW - 1, h - 14, handleColor);
+      }
+      return `
+        <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="${cab}" stroke="${cabShadow}" stroke-width="0.8"/>
+        ${doors_svg}
+        <rect x="${x}" y="${y - 6}" width="${w}" height="8" rx="1" fill="${ctTop}" stroke="${ctEdge}" stroke-width="0.5"/>
+      `;
+    }
+
+    /* Draw a wall cabinet unit */
+    function drawWallCab(x, y, w, h, cab, cabShadow, handleColor) {
+      const doors = w > 55 ? 2 : 1;
+      const doorW = (w - 4) / doors;
+      let doors_svg = '';
+      for (let d = 0; d < doors; d++) {
+        const dx = x + 2 + d * doorW;
+        doors_svg += `<rect x="${dx}" y="${y + 3}" width="${doorW - 1}" height="${h - 6}" rx="1" fill="${cab}" stroke="${cabShadow}" stroke-width="0.5" opacity="0.85"/>`;
+        doors_svg += handleBar(dx, y + 3, doorW - 1, h - 6, handleColor);
+      }
+      return `
+        <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="${cab}" stroke="${cabShadow}" stroke-width="0.8"/>
+        ${doors_svg}
+      `;
+    }
+
+    function dimLabel(x, y, label) {
+      return `<text x="${x}" y="${y}" text-anchor="middle" font-family="'PP Neue Montreal',sans-serif" font-size="10" fill="#ec4e0b" font-weight="600">${label}</text>`;
+    }
+    function dimLine(x1,y1,x2,y2) {
+      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ec4e0b" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>`;
+    }
+    function dimArrow(x1,y1,x2,y2) {
+      const angle = Math.atan2(y2-y1, x2-x1);
+      const len = 5;
+      const a1x = x1 + len*Math.cos(angle); const a1y = y1 + len*Math.sin(angle);
+      const a2x = x2 - len*Math.cos(angle); const a2y = y2 - len*Math.sin(angle);
+      return `<line x1="${x1}" y1="${y1}" x2="${a1x}" y2="${a1y}" stroke="#ec4e0b" stroke-width="1" opacity="0.7"/>
+              <line x1="${x2}" y1="${y2}" x2="${a2x}" y2="${a2y}" stroke="#ec4e0b" stroke-width="1" opacity="0.7"/>
+              <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ec4e0b" stroke-width="1" opacity="0.5"/>`;
+    }
+
+    function renderUShape(cab, cabShadow, cabLight, ctTop, ctEdge, hColor, wallColor, floorColor, tileColor, island) {
+      return `
+        <!-- Floor -->
+        <rect x="0" y="0" width="760" height="560" fill="${floorColor}"/>
+        <!-- Back wall -->
+        ${state.showWalls ? `<rect x="80" y="40" width="600" height="380" fill="${wallColor}"/>` : ''}
+        <!-- Wall tiles / backsplash -->
+        ${state.showBacksplash ? Array.from({length:8}, (_,i) => Array.from({length:5}, (_,j) =>
+          `<rect x="${80+i*75}" y="${40+j*58}" width="73" height="56" fill="${tileColor}" stroke="#ddd" stroke-width="0.5" opacity="0.6"/>`
+        ).join('')).join('') : ''}
+
+        <!-- Left wall cabinets (upper) -->
+        ${drawWallCab(90, 60, 70, 90, cab, cabShadow, hColor)}
+        ${drawWallCab(165, 60, 70, 90, cab, cabShadow, hColor)}
+        ${drawWallCab(240, 60, 70, 90, cab, cabShadow, hColor)}
+
+        <!-- Back wall cabinets (upper) -->
+        ${drawWallCab(320, 60, 80, 90, cab, cabShadow, hColor)}
+        ${drawWallCab(405, 60, 80, 90, cab, cabShadow, hColor)}
+        ${drawWallCab(490, 60, 80, 90, cab, cabShadow, hColor)}
+        ${drawWallCab(575, 60, 80, 90, cab, cabShadow, hColor)}
+
+        <!-- Left base cabinets -->
+        ${drawBaseCab(90, 290, 70, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(165, 290, 70, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(240, 290, 70, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+
+        <!-- Back base cabinets -->
+        ${drawBaseCab(320, 290, 80, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(405, 290, 80, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(490, 290, 80, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(575, 290, 80, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+
+        <!-- Right base cabinets -->
+        ${drawBaseCab(590, 290, 70, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(590, 185, 70, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+
+        <!-- Right wall cabinets -->
+        ${drawWallCab(590, 60, 70, 90, cab, cabShadow, hColor)}
+        ${drawWallCab(520, 60, 65, 90, cab, cabShadow, hColor)}
+
+        <!-- Countertop continuity lines -->
+        <line x1="90" y1="284" x2="660" y2="284" stroke="${ctEdge}" stroke-width="1" opacity="0.5"/>
+
+        <!-- Island (conditional) -->
+        ${island === 'standard' ? `
+          <rect x="250" y="430" width="260" height="80" rx="3" fill="${cab}" stroke="${cabShadow}" stroke-width="1"/>
+          <rect x="250" y="424" width="260" height="10" rx="2" fill="${ctTop}" stroke="${ctEdge}" stroke-width="0.8"/>
+          ${handleBar(250, 424, 260, 80, hColor)}
+          <text x="380" y="476" text-anchor="middle" font-size="11" fill="${cabShadow}" opacity="0.5">Island</text>
+        ` : ''}
+        ${island === 'large' ? `
+          <rect x="190" y="420" width="380" height="90" rx="3" fill="${cab}" stroke="${cabShadow}" stroke-width="1"/>
+          <rect x="190" y="413" width="380" height="11" rx="2" fill="${ctTop}" stroke="${ctEdge}" stroke-width="0.8"/>
+          ${handleBar(190, 413, 380, 90, hColor)}
+          <text x="380" y="472" text-anchor="middle" font-size="11" fill="${cabShadow}" opacity="0.5">Large Island</text>
+        ` : ''}
+
+        <!-- Floor shadow -->
+        <rect x="80" y="400" width="600" height="20" fill="${cabShadow}" opacity="0.06"/>
+
+        <!-- Dimensions overlay -->
+        ${state.showDimensions ? `
+          ${dimArrow(90,420,660,420)}
+          ${dimLabel(375,432,'600 cm')}
+          ${dimArrow(50,60,50,400)}
+          ${dimLabel(38,235,'340 cm')}
+          ${dimArrow(90,155,310,155)}
+          ${dimLabel(200,148,'220 cm')}
+        ` : ''}
+
+        <!-- Layout label -->
+        <text x="380" y="545" text-anchor="middle" font-family="'PP Neue Montreal', sans-serif" font-size="12" fill="#999" letter-spacing="0.08em">U-SHAPED LAYOUT</text>
+      `;
+    }
+
+    function renderLShape(cab, cabShadow, cabLight, ctTop, ctEdge, hColor, wallColor, floorColor, tileColor, island) {
+      return `
+        <rect x="0" y="0" width="760" height="560" fill="${floorColor}"/>
+        ${state.showWalls ? `<rect x="80" y="40" width="600" height="380" fill="${wallColor}"/>` : ''}
+        ${state.showBacksplash ? Array.from({length:8}, (_,i) => Array.from({length:5}, (_,j) =>
+          `<rect x="${80+i*75}" y="${40+j*58}" width="73" height="56" fill="${tileColor}" stroke="#ddd" stroke-width="0.5" opacity="0.6"/>`
+        ).join('')).join('') : ''}
+
+        <!-- Back wall upper cabs -->
+        ${drawWallCab(100, 60, 80, 90, cab, cabShadow, hColor)}
+        ${drawWallCab(185, 60, 80, 90, cab, cabShadow, hColor)}
+        ${drawWallCab(270, 60, 80, 90, cab, cabShadow, hColor)}
+        ${drawWallCab(355, 60, 80, 90, cab, cabShadow, hColor)}
+        ${drawWallCab(440, 60, 80, 90, cab, cabShadow, hColor)}
+
+        <!-- Back base cabs -->
+        ${drawBaseCab(100, 290, 80, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(185, 290, 80, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(270, 290, 80, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(355, 290, 80, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(440, 290, 80, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+
+        <!-- Right side (shorter wing) -->
+        ${drawWallCab(530, 60, 75, 90, cab, cabShadow, hColor)}
+        ${drawWallCab(610, 60, 75, 90, cab, cabShadow, hColor)}
+        ${drawBaseCab(530, 290, 75, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(530, 185, 75, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(610, 290, 75, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(610, 185, 75, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+
+        <line x1="100" y1="284" x2="685" y2="284" stroke="${ctEdge}" stroke-width="1" opacity="0.5"/>
+
+        ${island === 'standard' ? `
+          <rect x="220" y="430" width="240" height="75" rx="3" fill="${cab}" stroke="${cabShadow}" stroke-width="1"/>
+          <rect x="220" y="424" width="240" height="10" rx="2" fill="${ctTop}" stroke="${ctEdge}" stroke-width="0.8"/>
+        ` : island === 'large' ? `
+          <rect x="160" y="420" width="360" height="85" rx="3" fill="${cab}" stroke="${cabShadow}" stroke-width="1"/>
+          <rect x="160" y="413" width="360" height="11" rx="2" fill="${ctTop}" stroke="${ctEdge}" stroke-width="0.8"/>
+        ` : ''}
+
+        <rect x="80" y="400" width="600" height="20" fill="${cabShadow}" opacity="0.06"/>
+        ${state.showDimensions ? `
+          ${dimArrow(100,425,685,425)}
+          ${dimLabel(392,437,'575 cm')}
+          ${dimArrow(50,60,50,400)}
+          ${dimLabel(38,235,'340 cm')}
+          ${dimArrow(530,155,685,155)}
+          ${dimLabel(607,148,'155 cm')}
+        ` : ''}
+        <text x="380" y="545" text-anchor="middle" font-family="'PP Neue Montreal', sans-serif" font-size="12" fill="#999" letter-spacing="0.08em">L-SHAPED LAYOUT</text>
+      `;
+    }
+
+    function renderGalley(cab, cabShadow, cabLight, ctTop, ctEdge, hColor, wallColor, floorColor, tileColor) {
+      return `
+        <rect x="0" y="0" width="760" height="560" fill="${floorColor}"/>
+        ${state.showWalls ? `<rect x="80" y="40" width="600" height="200" fill="${wallColor}"/>` : ''}
+        ${state.showBacksplash ? Array.from({length:8}, (_,i) => Array.from({length:3}, (_,j) =>
+          `<rect x="${80+i*75}" y="${40+j*58}" width="73" height="56" fill="${tileColor}" stroke="#ddd" stroke-width="0.5" opacity="0.6"/>`
+        ).join('')).join('') : ''}
+
+        <!-- Top wall -->
+        ${drawWallCab(100, 55, 80, 85, cab, cabShadow, hColor)}
+        ${drawWallCab(185, 55, 80, 85, cab, cabShadow, hColor)}
+        ${drawWallCab(270, 55, 80, 85, cab, cabShadow, hColor)}
+        ${drawWallCab(355, 55, 80, 85, cab, cabShadow, hColor)}
+        ${drawWallCab(440, 55, 80, 85, cab, cabShadow, hColor)}
+        ${drawWallCab(525, 55, 80, 85, cab, cabShadow, hColor)}
+        ${drawWallCab(610, 55, 75, 85, cab, cabShadow, hColor)}
+
+        <!-- Top base -->
+        ${drawBaseCab(100, 240, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(185, 240, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(270, 240, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(355, 240, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(440, 240, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(525, 240, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(610, 240, 75, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+
+        <!-- Bottom wall (opposite side) - just base cabinets -->
+        ${state.showWalls ? `<rect x="80" y="370" width="600" height="100" fill="${wallColor}" opacity="0.4"/>` : ''}
+        ${drawBaseCab(100, 370, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(185, 370, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(270, 370, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(355, 370, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(440, 370, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(525, 370, 80, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(610, 370, 75, 100, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+
+        ${state.showDimensions ? `
+          ${dimArrow(100,460,685,460)}
+          ${dimLabel(392,472,'575 cm')}
+          ${dimArrow(50,55,50,340)}
+          ${dimLabel(38,200,'285 cm')}
+        ` : ''}
+        <text x="380" y="545" text-anchor="middle" font-family="'PP Neue Montreal', sans-serif" font-size="12" fill="#999" letter-spacing="0.08em">GALLEY LAYOUT</text>
+      `;
+    }
+
+    function renderSingleWall(cab, cabShadow, cabLight, ctTop, ctEdge, hColor, wallColor, floorColor, tileColor) {
+      return `
+        <rect x="0" y="0" width="760" height="560" fill="${floorColor}"/>
+        ${state.showWalls ? `<rect x="80" y="40" width="600" height="340" fill="${wallColor}"/>` : ''}
+        ${state.showBacksplash ? Array.from({length:8}, (_,i) => Array.from({length:5}, (_,j) =>
+          `<rect x="${80+i*75}" y="${40+j*58}" width="73" height="56" fill="${tileColor}" stroke="#ddd" stroke-width="0.5" opacity="0.6"/>`
+        ).join('')).join('') : ''}
+
+        ${drawWallCab(100, 60, 85, 95, cab, cabShadow, hColor)}
+        ${drawWallCab(190, 60, 85, 95, cab, cabShadow, hColor)}
+        ${drawWallCab(280, 60, 85, 95, cab, cabShadow, hColor)}
+        ${drawWallCab(370, 60, 85, 95, cab, cabShadow, hColor)}
+        ${drawWallCab(460, 60, 85, 95, cab, cabShadow, hColor)}
+        ${drawWallCab(550, 60, 85, 95, cab, cabShadow, hColor)}
+        ${drawWallCab(640, 60, 45, 95, cab, cabShadow, hColor)}
+
+        ${drawBaseCab(100, 290, 85, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(190, 290, 85, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(280, 290, 85, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(370, 290, 85, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(460, 290, 85, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(550, 290, 85, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+        ${drawBaseCab(640, 290, 45, 110, cab, cabShadow, cabLight, ctTop, ctEdge, hColor)}
+
+        <line x1="100" y1="284" x2="686" y2="284" stroke="${ctEdge}" stroke-width="1" opacity="0.5"/>
+        <rect x="80" y="400" width="600" height="20" fill="${cabShadow}" opacity="0.06"/>
+        ${state.showDimensions ? `
+          ${dimArrow(100,430,685,430)}
+          ${dimLabel(392,442,'575 cm')}
+          ${dimArrow(50,60,50,400)}
+          ${dimLabel(38,235,'340 cm')}
+        ` : ''}
+        <text x="380" y="545" text-anchor="middle" font-family="'PP Neue Montreal', sans-serif" font-size="12" fill="#999" letter-spacing="0.08em">SINGLE WALL LAYOUT</text>
+      `;
+    }
+
+    /* ===== SINGLE-SELECT HANDLER ===== */
+    function handleSingleSelect(groupId, optionValue, btn) {
+      state[groupId] = optionValue;
+      const section = document.querySelector(`[data-group="${groupId}"]`);
+      section.querySelectorAll('.img-swatch, .material-swatch').forEach(el => {
+        el.classList.remove('is-selected');
+        el.setAttribute('aria-checked', 'false');
+      });
+      btn.classList.add('is-selected');
+      btn.setAttribute('aria-checked', 'true');
+      pushHistory();
+      renderKitchenScene();
+    }
+
+    /* ===== MULTI-SELECT HANDLER ===== */
+    function handleMultiSelect(groupId, optionValue, btn) {
+      let arr;
+      if (groupId === 'baseCabinets') arr = state.baseCabinets;
+      else if (groupId === 'wallCabinets') arr = state.wallCabinets;
+      else if (groupId === 'tallCabinets') arr = state.tallCabinets;
+      else if (groupId === 'appliances') arr = state.appliances;
+      else return;
+
+      const idx = arr.indexOf(optionValue);
+      if (idx >= 0) {
+        arr.splice(idx, 1);
+        btn.classList.remove('is-multi-selected');
+        btn.setAttribute('aria-checked', 'false');
+      } else {
+        arr.push(optionValue);
+        btn.classList.add('is-multi-selected');
+        btn.setAttribute('aria-checked', 'true');
+      }
+      pushHistory();
+    }
+
+    /* ===== DROPDOWN CHANGE ===== */
+    function handleDropdownChange(groupId, value) {
+      state[groupId] = value;
+      pushHistory();
+      renderKitchenScene();
+    }
+
+    /* ===== VIEW MODE ===== */
+    function setViewMode(mode) {
+      state.viewMode = mode;
+      document.getElementById('btn-2d').classList.toggle('is-active', mode === '2d');
+      document.getElementById('btn-2d').setAttribute('aria-pressed', mode === '2d');
+      document.getElementById('btn-3d').classList.toggle('is-active', mode === '3d');
+      document.getElementById('btn-3d').setAttribute('aria-pressed', mode === '3d');
+    }
+
+    /* ===== FULLSCREEN ===== */
+    /* ===== CANVAS TOGGLES ===== */
+    function toggleDimensions() {
+      state.showDimensions = !state.showDimensions;
+      const btn = document.getElementById('btn-dimensions');
+      btn.classList.toggle('is-active', state.showDimensions);
+      btn.setAttribute('aria-pressed', state.showDimensions);
+      renderKitchenScene();
+    }
+
+    function toggleWalls() {
+      state.showWalls = !state.showWalls;
+      const btn = document.getElementById('btn-hide-walls');
+      btn.classList.toggle('is-active', !state.showWalls);
+      btn.setAttribute('aria-pressed', !state.showWalls);
+      renderKitchenScene();
+    }
+
+    function toggleBacksplash() {
+      state.showBacksplash = !state.showBacksplash;
+      const btn = document.getElementById('btn-hide-backsplash');
+      btn.classList.toggle('is-active', !state.showBacksplash);
+      btn.setAttribute('aria-pressed', !state.showBacksplash);
+      renderKitchenScene();
+    }
+
+    function resetCamera() {
+      renderKitchenScene();
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.();
+      } else {
+        document.exitFullscreen?.();
+      }
+    }
+
+    /* ===== HISTORY ===== */
+    function pushHistory() {
+      history.splice(historyIndex + 1);
+      history.push(JSON.stringify(state));
+      historyIndex = history.length - 1;
+    }
+
+    function undo() {
+      if (historyIndex <= 0) return;
+      historyIndex--;
+      restoreState(JSON.parse(history[historyIndex]));
+    }
+
+    function redo() {
+      if (historyIndex >= history.length - 1) return;
+      historyIndex++;
+      restoreState(JSON.parse(history[historyIndex]));
+    }
+
+    function restoreState(saved) {
+      Object.assign(state, saved);
+      syncUIToState();
+      renderKitchenScene();
+    }
+
+    function resetAll() {
+      Object.assign(state, {
+        layout: 'u_shaped', island: 'none',
+        baseCabinets: [], wallCabinets: [], tallCabinets: [],
+        doorStyle: 'solid', doorHandle: 'none', appliances: [],
+        cabinetFinish: 'walnut', countertopFinish: 'white_metallic_ct',
+        hardwareFinish: 'brushed_nickel', viewMode: '2d',
+        showDimensions: false, showWalls: true, showBacksplash: true
+      });
+      pushHistory();
+      syncUIToState();
+      renderKitchenScene();
+    }
+
+    /* Sync all button states to current JS state */
+    function syncUIToState() {
+      /* Single-select groups */
+      const singleGroups = [
+        { selector: '[data-group="layout"]', stateKey: 'layout' },
+        { selector: '[data-group="island"]', stateKey: 'island' },
+        { selector: '[data-group="door_style"]', stateKey: 'doorStyle' },
+        { selector: '[data-group="door_handle"]', stateKey: 'doorHandle' },
+        { selector: '[data-group="cabinet_finish"]', stateKey: 'cabinetFinish' },
+        { selector: '[data-group="countertop_finish"]', stateKey: 'countertopFinish' },
+      ];
+
+      singleGroups.forEach(({ selector, stateKey }) => {
+        const section = document.querySelector(selector);
+        if (!section) return;
+        section.querySelectorAll('[data-option]').forEach(el => {
+          const match = el.dataset.option === state[stateKey];
+          el.classList.toggle('is-selected', match);
+          el.setAttribute('aria-checked', match ? 'true' : 'false');
+        });
+      });
+
+      /* Multi-select groups */
+      const multiGroups = [
+        { selector: '[data-group="base_cabinet"]', stateArr: state.baseCabinets },
+        { selector: '[data-group="wall_cabinet"]', stateArr: state.wallCabinets },
+        { selector: '[data-group="tall_cabinet"]', stateArr: state.tallCabinets },
+        { selector: '[data-group="appliances"]', stateArr: state.appliances },
+      ];
+      multiGroups.forEach(({ selector, stateArr }) => {
+        const section = document.querySelector(selector);
+        if (!section) return;
+        section.querySelectorAll('[data-option]').forEach(el => {
+          const selected = stateArr.includes(el.dataset.option);
+          el.classList.toggle('is-multi-selected', selected);
+          el.setAttribute('aria-checked', selected ? 'true' : 'false');
+        });
+      });
+
+      /* Dropdown */
+      const hwSelect = document.getElementById('hardware-finish-select');
+      if (hwSelect) hwSelect.value = state.hardwareFinish;
+
+      /* Canvas toggles */
+      const btnDim = document.getElementById('btn-dimensions');
+      if (btnDim) { btnDim.classList.toggle('is-active', state.showDimensions); btnDim.setAttribute('aria-pressed', state.showDimensions); }
+      const btnWalls = document.getElementById('btn-hide-walls');
+      if (btnWalls) { btnWalls.classList.toggle('is-active', !state.showWalls); btnWalls.setAttribute('aria-pressed', !state.showWalls); }
+      const btnBs = document.getElementById('btn-hide-backsplash');
+      if (btnBs) { btnBs.classList.toggle('is-active', !state.showBacksplash); btnBs.setAttribute('aria-pressed', !state.showBacksplash); }
+    }
+
+    /* ===== GENERATE ASSETS ===== */
+    function generateAssets() {
+      const summary = [
+        `Layout: ${layoutLabels[state.layout] || state.layout}`,
+        `Island: ${state.island}`,
+        `Door Style: ${state.doorStyle}`,
+        `Door Handle: ${state.doorHandle}`,
+        `Cabinet Finish: ${state.cabinetFinish}`,
+        `Countertop: ${state.countertopFinish}`,
+        `Hardware: ${state.hardwareFinish}`,
+        `Appliances: ${state.appliances.join(', ') || 'None'}`,
+      ].join('\n');
+      alert('Generating Assets...\n\n' + summary);
+    }
+
+    /* ===== EVENT DELEGATION ===== */
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('[data-group][data-option]');
+      if (!btn) return;
+
+      const group = btn.dataset.group;
+      const option = btn.dataset.option;
+
+      const singleGroups = ['layout', 'island', 'door_style', 'door_handle'];
+      const finishGroups = ['cabinet_finish', 'countertop_finish'];
+      const multiGroups = ['base_cabinet', 'wall_cabinet', 'tall_cabinet', 'appliances'];
+      const stateKeyMap = {
+        layout: 'layout', island: 'island', door_style: 'doorStyle',
+        door_handle: 'doorHandle', cabinet_finish: 'cabinetFinish',
+        countertop_finish: 'countertopFinish'
+      };
+      const multiStateMap = {
+        base_cabinet: 'baseCabinets', wall_cabinet: 'wallCabinets',
+        tall_cabinet: 'tallCabinets', appliances: 'appliances'
+      };
+
+      if (singleGroups.includes(group) || finishGroups.includes(group)) {
+        handleSingleSelect(stateKeyMap[group], option, btn);
+      } else if (multiGroups.includes(group)) {
+        handleMultiSelect(multiStateMap[group], option, btn);
+      }
+    });
+
+    /* ===== KEYBOARD NAVIGATION ===== */
+    document.addEventListener('keydown', e => {
+      const btn = e.target.closest('[data-group][data-option]');
+      if (!btn) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        btn.click();
+        return;
+      }
+      if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(e.key)) return;
+      e.preventDefault();
+      const group = btn.closest('[data-group]');
+      const opts = Array.from(group.querySelectorAll('[data-option]'));
+      const idx = opts.indexOf(btn);
+      let next = idx;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (idx + 1) % opts.length;
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (idx - 1 + opts.length) % opts.length;
+      opts[next].focus();
+    });
+
+    /* ===== CHAT ===== */
+    function toggleChat() {
+      const panel = document.getElementById('chat-panel');
+      const body = document.getElementById('chat-body');
+      const btn = panel.querySelector('.chat-panel-toggle');
+      const open = panel.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', open);
+      body.setAttribute('aria-hidden', !open);
+      if (open) {
+        const messages = document.getElementById('chat-messages');
+        messages.scrollTop = messages.scrollHeight;
+      }
+    }
+
+    function sendChat() {
+      const input = document.getElementById('chat-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      const messages = document.getElementById('chat-messages');
+      const el = document.createElement('div');
+      el.className = 'chat-msg user';
+      el.textContent = msg;
+      messages.appendChild(el);
+      input.value = '';
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.target === document.getElementById('chat-input') && e.key === 'Enter') {
+        e.preventDefault();
+        sendChat();
+      }
+    });
+
+    /* ===== INIT ===== */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderKitchenScene();
+    });
+  </script>
+
+</body>
+</html>
