@@ -53,8 +53,8 @@
       --s-100: 4px;  --s-200: 8px;  --s-300: 12px; --s-400: 16px;
       --s-500: 20px; --s-600: 24px; --s-700: 28px; --s-800: 32px;
 
-      --z-float:   10;
-      --z-modal:  200;
+      --z-float: 10;
+      --z-modal: 200;
 
       --font-primary: 'PP Neue Montreal', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       --panel-w: 264px;
@@ -74,22 +74,16 @@
     input { font: inherit; }
     .material-symbols-outlined { font-size: 18px; line-height: 1; user-select: none; }
 
-    /* ─── CANVAS (full viewport backdrop) ─── */
+    /* ─── CANVAS ─── */
     .canvas-wrapper {
       position: fixed;
       inset: 0;
       z-index: 0;
       background: var(--surface-page-secondary);
     }
-    .canvas-area {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      overflow: hidden;
-    }
+    .canvas-area { width: 100%; height: 100%; position: relative; overflow: hidden; }
     .canvas-inner {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
     }
     .canvas-area.view-3d .canvas-inner {
@@ -98,7 +92,6 @@
     }
     .assembly-svg { width: 100%; height: 100%; display: block; }
 
-    /* Toast */
     .toast {
       position: absolute;
       top: var(--s-400);
@@ -107,61 +100,43 @@
       background: var(--surface-error-default-subtle);
       border: 1px solid var(--border-error-default);
       color: var(--text-error-default);
-      font-size: 12px;
-      font-weight: 500;
+      font-size: 12px; font-weight: 500;
       padding: var(--s-200) var(--s-400);
       border-radius: var(--br-200);
       z-index: 20;
-      opacity: 0;
-      pointer-events: none;
+      opacity: 0; pointer-events: none;
       transition: opacity 200ms ease, transform 200ms ease;
       white-space: nowrap;
     }
     .toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* Canvas hint */
     .canvas-hint {
       position: absolute;
-      bottom: var(--s-500);
-      left: 50%;
+      bottom: var(--s-500); left: 50%;
       transform: translateX(-50%);
       background: rgba(26,26,26,0.66);
-      color: #fff;
-      font-size: 11px;
+      color: #fff; font-size: 11px;
       padding: var(--s-100) var(--s-400);
-      border-radius: 100px;
-      pointer-events: none;
-      white-space: nowrap;
-      transition: opacity 400ms ease;
+      border-radius: 100px; pointer-events: none;
+      white-space: nowrap; transition: opacity 400ms ease;
     }
     .canvas-hint.is-hidden { opacity: 0; }
-
-    /* ─── FLOATING PANEL SHADOW ─── */
-    .float-panel {
-      box-shadow: 0 2px 16px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.06);
-    }
 
     /* ─── LEFT PANEL ─── */
     .panel {
       position: fixed;
-      left: var(--panel-gap);
-      top: var(--panel-gap);
-      bottom: var(--panel-gap);
+      left: var(--panel-gap); top: var(--panel-gap); bottom: var(--panel-gap);
       width: var(--panel-w);
       background: var(--surface-default);
       border-radius: var(--br-float);
       box-shadow: 0 2px 16px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.06);
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
       overflow: hidden;
       z-index: var(--z-float);
     }
 
-    /* Panel header */
     .panel-header {
-      display: flex;
-      align-items: center;
-      gap: var(--s-300);
+      display: flex; align-items: center; gap: var(--s-300);
       padding: var(--s-400);
       border-bottom: 1px solid var(--border-default);
       flex-shrink: 0;
@@ -169,11 +144,8 @@
     .brand-logo { width: 26px; height: 26px; display: block; flex-shrink: 0; }
     .brand-title { font-size: 13px; font-weight: 600; color: var(--text-default-heading); white-space: nowrap; }
 
-    /* Panel scrollable content */
     .panel-content {
-      flex: 1;
-      overflow-y: auto;
-      min-height: 0;
+      flex: 1; overflow-y: auto; min-height: 0;
       scrollbar-width: thin;
       scrollbar-color: var(--border-default-secondary) transparent;
     }
@@ -181,7 +153,6 @@
     .panel-content::-webkit-scrollbar-track { background: transparent; }
     .panel-content::-webkit-scrollbar-thumb { background: var(--border-default-secondary); border-radius: 4px; }
 
-    /* Section */
     .panel-section {
       padding: var(--s-400);
       border-bottom: 1px solid var(--border-default);
@@ -190,49 +161,39 @@
 
     .section-label {
       display: block;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
       color: var(--text-default-caption);
       margin-bottom: var(--s-300);
     }
 
-    /* ─── OPTION GRID (3-up, unified for modules + fabric) ─── */
+    /* ─── OPTION GRID (3-up, modules + fabric) ─── */
     .option-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 6px;
     }
 
-    /* Option card */
     .option-card {
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
       border: 1.5px solid var(--border-default-secondary);
       border-radius: var(--br-200);
-      overflow: hidden;
-      cursor: pointer;
+      overflow: hidden; cursor: pointer;
       background: var(--surface-default);
-      transition: border-color 150ms ease-out, background 150ms ease-out;
+      transition: border-color 150ms ease-out;
       text-align: left;
     }
     .option-card-preview {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       padding: 10px 8px 8px;
       background: var(--surface-page-secondary);
-      flex: 1;
-      min-height: 54px;
+      flex: 1; min-height: 54px;
     }
     .option-card-label {
       padding: 4px 6px 5px;
-      font-size: 10px;
-      font-weight: 500;
+      font-size: 10px; font-weight: 500;
       color: var(--text-default-body);
-      text-align: center;
-      line-height: 1.3;
+      text-align: center; line-height: 1.3;
       border-top: 1px solid var(--border-default);
       background: var(--surface-default);
     }
@@ -243,25 +204,12 @@
     .option-card:focus-visible { outline: 2px solid var(--border-primary-focus); outline-offset: 2px; }
     .option-card:active { transform: scale(0.97); }
     @media (hover: hover) {
-      .option-card:not(.is-selected):hover {
-        border-color: var(--border-primary-default);
-      }
-      .option-card:not(.is-selected):hover .option-card-preview {
-        background: var(--surface-primary-default-subtle);
-      }
+      .option-card:not(.is-selected):hover { border-color: var(--border-primary-default); }
+      .option-card:not(.is-selected):hover .option-card-preview { background: var(--surface-primary-default-subtle); }
     }
 
-    /* Fabric swatch fills the preview area */
-    .option-card.fabric-card .option-card-preview {
-      padding: 0;
-      min-height: 48px;
-    }
-    .fabric-swatch {
-      width: 100%;
-      height: 100%;
-      min-height: 48px;
-      display: block;
-    }
+    .option-card.fabric-card .option-card-preview { padding: 0; min-height: 48px; }
+    .fabric-swatch { width: 100%; height: 100%; min-height: 48px; display: block; }
 
     /* ─── CHAT SECTION ─── */
     .chat-section {
@@ -269,22 +217,17 @@
       border-top: 1px solid var(--border-default);
     }
     .chat-toggle {
-      width: 100%;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      gap: var(--s-200);
+      width: 100%; height: 44px;
+      display: flex; align-items: center; gap: var(--s-200);
       padding: 0 var(--s-400);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--text-default-caption);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--text-default-heading);
       transition: background 150ms ease-out;
     }
     @media (hover: hover) { .chat-toggle:hover { background: var(--surface-default-secondary); } }
-    .chat-diamond { color: var(--text-primary-default); }
-    .chat-chevron { margin-left: auto; font-size: 16px !important; transition: transform 250ms ease; }
+    .chat-star { font-size: 13px; color: var(--text-default-heading); line-height: 1; }
+    .chat-chevron { margin-left: auto; font-size: 18px !important; transition: transform 250ms ease; }
     .chat-toggle[aria-expanded="true"] .chat-chevron { transform: rotate(180deg); }
 
     .chat-body-wrap {
@@ -296,39 +239,48 @@
     .chat-body { overflow: hidden; min-height: 0; }
 
     .chat-messages {
-      height: 150px;
+      height: 210px;
       overflow-y: auto;
-      padding: var(--s-300) var(--s-400);
-      background: var(--surface-page-secondary);
-    }
-    .chat-msg {
-      font-size: 12px;
-      line-height: 1.5;
-      margin-bottom: var(--s-200);
-    }
-    .chat-msg--user { text-align: right; color: var(--text-default-heading); }
-    .chat-msg--system { color: var(--text-default-body); }
-    .chat-placeholder {
-      font-size: 11px;
-      color: var(--text-default-caption);
-      line-height: 1.6;
-      text-align: center;
-      padding-top: var(--s-500);
-    }
-    .chat-input-row {
-      display: flex;
-      gap: var(--s-200);
-      padding: var(--s-200) var(--s-300) var(--s-300);
-      border-top: 1px solid var(--border-default);
+      padding: var(--s-400);
       background: var(--surface-default);
+      display: flex; flex-direction: column; gap: var(--s-300);
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-default-secondary) transparent;
+    }
+    .chat-messages::-webkit-scrollbar { width: 3px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border-default-secondary); border-radius: 3px; }
+
+    .chat-bubble {
+      font-size: 13px; line-height: 1.55;
+      padding: var(--s-300) var(--s-400);
+      border-radius: 14px;
+      max-width: 92%;
+    }
+    .chat-bubble--system {
+      background: var(--surface-default-secondary);
+      color: var(--text-default-body);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .chat-bubble--user {
+      background: var(--surface-primary-default-subtle);
+      color: var(--text-default-heading);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-input-row {
+      display: flex; align-items: center; gap: var(--s-200);
+      padding: var(--s-200) var(--s-300) var(--s-400);
+      background: var(--surface-default);
+      border-top: 1px solid var(--border-default);
     }
     .chat-input {
-      flex: 1;
-      height: 32px;
-      padding: 0 var(--s-300);
-      font-size: 12px;
+      flex: 1; height: 38px;
+      padding: 0 var(--s-400);
+      font-size: 13px;
       border: 1px solid var(--border-default-secondary);
-      border-radius: var(--br-100);
+      border-radius: 100px;
       background: var(--surface-page-secondary);
       color: var(--text-default-body);
       outline: none;
@@ -336,47 +288,38 @@
     .chat-input::placeholder { color: var(--text-default-caption); }
     .chat-input:focus { border-color: var(--border-primary-focus); }
     .chat-send {
-      width: 32px; height: 32px;
+      width: 38px; height: 38px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
       background: var(--surface-primary-default);
       color: var(--text-primary-on-color);
-      border-radius: var(--br-100);
-      flex-shrink: 0;
+      border-radius: 50%;
       transition: background 150ms ease-out;
     }
-    .chat-send .material-symbols-outlined { font-size: 15px !important; }
+    .chat-send .material-symbols-outlined { font-size: 17px !important; }
     @media (hover: hover) { .chat-send:hover { background: var(--surface-primary-default-hover); } }
 
-    /* ─── TOOLBAR PANEL (top-right floating) ─── */
+    /* ─── TOOLBAR PANEL ─── */
     .toolbar-panel {
       position: fixed;
-      top: var(--panel-gap);
-      right: var(--panel-gap);
+      top: var(--panel-gap); right: var(--panel-gap);
       background: var(--surface-default);
       border-radius: 10px;
       box-shadow: 0 2px 16px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.06);
-      display: flex;
-      align-items: center;
-      padding: 6px 8px;
-      gap: 2px;
+      display: flex; align-items: center;
+      padding: 6px 8px; gap: 2px;
       z-index: var(--z-float);
       height: 48px;
     }
 
-    /* View toggle */
     .view-toggle {
       display: flex;
       background: var(--surface-default-secondary);
       border-radius: var(--br-100);
-      padding: 3px;
-      gap: 2px;
+      padding: 3px; gap: 2px;
     }
     .view-btn {
-      height: 28px;
-      padding: 0 var(--s-300);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
+      height: 28px; padding: 0 var(--s-300);
+      font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
       border-radius: calc(var(--br-100) - 1px);
       color: var(--text-default-body);
       transition: background 150ms ease-out, color 150ms ease-out;
@@ -393,16 +336,12 @@
     }
     .view-btn:focus-visible { outline: 2px solid var(--border-primary-focus); outline-offset: 2px; }
 
-    /* Toolbar divider */
     .toolbar-divider {
-      width: 1px;
-      height: 20px;
+      width: 1px; height: 20px;
       background: var(--border-default-secondary);
-      flex-shrink: 0;
-      margin: 0 var(--s-100);
+      flex-shrink: 0; margin: 0 var(--s-100);
     }
 
-    /* Icon button */
     .icon-btn {
       width: 32px; height: 32px;
       display: flex; align-items: center; justify-content: center;
@@ -422,71 +361,55 @@
       .icon-btn:not(:disabled).is-active:hover { background: var(--border-primary-default-subtle-hover); }
     }
     .icon-btn:focus-visible { outline: 2px solid var(--border-primary-focus); outline-offset: 2px; }
-    .icon-btn--danger:not(:disabled) { color: var(--text-error-default); }
-    @media (hover: hover) {
-      .icon-btn--danger:not(:disabled):hover {
-        background: var(--surface-error-default-subtle);
-        color: var(--text-error-default);
-      }
-    }
 
-    /* Custom tooltip (appears below — toolbar is at top of screen) */
+    /* Tooltip (appears below toolbar buttons) */
     [data-tooltip] { position: relative; }
     [data-tooltip]::after {
       content: attr(data-tooltip);
       position: absolute;
-      top: calc(100% + 7px);
-      left: 50%;
+      top: calc(100% + 7px); left: 50%;
       transform: translateX(-50%);
       background: var(--text-default-heading);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 400;
-      letter-spacing: 0;
-      text-transform: none;
+      color: #fff; font-size: 11px; font-weight: 400;
+      letter-spacing: 0; text-transform: none;
       white-space: nowrap;
-      padding: 4px 8px;
-      border-radius: var(--br-100);
+      padding: 4px 8px; border-radius: var(--br-100);
       pointer-events: none;
       opacity: 0;
       transition: opacity 120ms ease 400ms;
       z-index: 50;
     }
-    [data-tooltip]:hover::after { opacity: 1; }
-    [data-tooltip]:disabled::after { display: none; }
+    [data-tooltip]:hover:not(:disabled)::after { opacity: 1; }
 
-    /* Generate CTA — no icon */
     .btn-generate {
-      height: 36px;
-      padding: 0 var(--s-500);
+      height: 36px; padding: 0 var(--s-500);
       background: var(--surface-primary-default);
       color: var(--text-primary-on-color);
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 13px; font-weight: 600;
       border-radius: var(--br-200);
       transition: background 150ms ease-out;
-      white-space: nowrap;
-      margin-left: var(--s-100);
+      white-space: nowrap; margin-left: var(--s-100);
     }
     @media (hover: hover) { .btn-generate:hover { background: var(--surface-primary-default-hover); } }
     .btn-generate:focus-visible { outline: 2px solid var(--border-primary-focus); outline-offset: 2px; }
 
-    /* ─── DIMENSIONS BAR (bottom floating) ─── */
+    /* ─── DIMENSIONS BAR (hugs content, bottom-left) ─── */
     .dimensions-bar {
       position: fixed;
       bottom: var(--panel-gap);
       left: calc(var(--panel-w) + var(--panel-gap) * 2);
-      right: 152px;
+      width: max-content;
       background: var(--surface-default);
       border-radius: 100px;
       box-shadow: 0 1px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
       padding: 0 var(--s-500);
-      display: flex;
-      align-items: center;
-      gap: var(--s-600);
+      display: flex; align-items: center;
+      gap: var(--s-500);
       height: 36px;
       z-index: var(--z-float);
+      transition: opacity 200ms ease;
     }
+    .dimensions-bar.is-hidden { opacity: 0; pointer-events: none; }
     .dim-item { display: flex; align-items: center; gap: var(--s-200); }
     .dim-label {
       font-size: 10px; font-weight: 600;
@@ -494,75 +417,57 @@
       color: var(--text-default-caption);
     }
     .dim-value { font-size: 12px; font-weight: 500; color: var(--text-default-heading); }
-    .dim-item--right { margin-left: auto; }
 
     /* ─── LIVE STATUS (bottom-right floating pill) ─── */
     .live-status {
       position: fixed;
-      bottom: var(--panel-gap);
-      right: var(--panel-gap);
-      display: flex;
-      align-items: center;
-      gap: var(--s-200);
+      bottom: var(--panel-gap); right: var(--panel-gap);
+      display: flex; align-items: center; gap: var(--s-200);
       background: var(--surface-default);
       border-radius: 100px;
       box-shadow: 0 1px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
       padding: var(--s-100) var(--s-300);
-      font-size: 11px;
-      font-weight: 500;
+      font-size: 11px; font-weight: 500;
       color: var(--text-default-caption);
       pointer-events: none;
       z-index: var(--z-float);
     }
     .live-dot {
       width: 7px; height: 7px;
-      border-radius: 50%;
-      background: #00b64c;
-      flex-shrink: 0;
+      border-radius: 50%; background: #00b64c; flex-shrink: 0;
     }
 
     /* ─── OUTPUT MODAL ─── */
     .modal-backdrop {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(20,20,20,0.52);
       z-index: var(--z-modal);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       padding: var(--s-400);
-      opacity: 0;
-      pointer-events: none;
+      opacity: 0; pointer-events: none;
       transition: opacity 200ms ease;
     }
     .modal-backdrop.is-open { opacity: 1; pointer-events: auto; }
     .modal {
       background: var(--surface-default);
       border-radius: var(--br-200);
-      width: 100%;
-      max-width: 580px;
-      max-height: 82vh;
-      display: flex;
-      flex-direction: column;
+      width: 100%; max-width: 580px; max-height: 82vh;
+      display: flex; flex-direction: column;
       box-shadow: 0 8px 48px rgba(0,0,0,0.18);
       transform: translateY(14px);
       transition: transform 200ms ease;
     }
     .modal-backdrop.is-open .modal { transform: translateY(0); }
     .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: var(--s-500) var(--s-600);
-      border-bottom: 1px solid var(--border-default);
-      flex-shrink: 0;
+      border-bottom: 1px solid var(--border-default); flex-shrink: 0;
     }
     .modal-title { font-size: 18px; font-weight: 600; color: var(--text-default-heading); }
     .modal-close-btn {
       width: 32px; height: 32px;
       display: flex; align-items: center; justify-content: center;
-      border-radius: var(--br-100);
-      color: var(--text-default-body);
+      border-radius: var(--br-100); color: var(--text-default-body);
       transition: background 150ms ease-out;
     }
     @media (hover: hover) { .modal-close-btn:hover { background: var(--surface-default-secondary); } }
@@ -573,36 +478,25 @@
     .output-section-label {
       font-size: 10px; font-weight: 600;
       letter-spacing: 2px; text-transform: uppercase;
-      color: var(--text-default-caption);
-      margin-bottom: var(--s-300);
+      color: var(--text-default-caption); margin-bottom: var(--s-300);
     }
     .output-dims { display: flex; gap: var(--s-300); }
     .dim-card {
-      flex: 1; padding: var(--s-400);
-      text-align: center;
-      background: var(--surface-page-secondary);
-      border-radius: var(--br-200);
+      flex: 1; padding: var(--s-400); text-align: center;
+      background: var(--surface-page-secondary); border-radius: var(--br-200);
     }
     .dim-card-num { font-size: 22px; font-weight: 600; color: var(--text-default-heading); }
     .dim-card-label { font-size: 10px; font-weight: 400; color: var(--text-default-caption); margin-top: 4px; }
     .output-json {
-      background: var(--text-default-heading);
-      color: #d4d4d4;
-      border-radius: var(--br-200);
-      padding: var(--s-500);
+      background: var(--text-default-heading); color: #d4d4d4;
+      border-radius: var(--br-200); padding: var(--s-500);
       font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-      font-size: 11px;
-      line-height: 1.6;
-      overflow-x: auto;
-      white-space: pre;
+      font-size: 11px; line-height: 1.6; overflow-x: auto; white-space: pre;
     }
     .modal-footer {
       padding: var(--s-400) var(--s-600);
       border-top: 1px solid var(--border-default);
-      display: flex;
-      gap: var(--s-300);
-      justify-content: flex-end;
-      flex-shrink: 0;
+      display: flex; gap: var(--s-300); justify-content: flex-end; flex-shrink: 0;
     }
     .btn-modal-copy {
       height: 38px; padding: 0 var(--s-400);
@@ -638,7 +532,7 @@
 </head>
 <body>
 
-<!-- ===== CANVAS (full viewport) ===== -->
+<!-- ===== CANVAS ===== -->
 <div class="canvas-wrapper">
   <div class="canvas-area" id="canvas-area">
     <div class="canvas-inner" id="canvas-inner">
@@ -656,19 +550,17 @@
     </div>
   </div>
   <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
-  <div class="canvas-hint" id="canvas-hint">Click a module card to add it · Click a placed module to select it</div>
+  <div class="canvas-hint" id="canvas-hint">Click a module card to add it · Click a placed module to select it · Delete key to remove</div>
 </div>
 
-<!-- ===== LEFT FLOATING PANEL ===== -->
+<!-- ===== LEFT PANEL ===== -->
 <aside class="panel" aria-label="Configuration panel">
 
-  <!-- Header -->
   <div class="panel-header">
     <img src="../assets/logos/Mark.svg" class="brand-logo" alt="imagine.io"/>
     <span class="brand-title">Sofa Configurator</span>
   </div>
 
-  <!-- Scrollable sections -->
   <div class="panel-content">
 
     <!-- SEATING UNITS -->
@@ -727,12 +619,24 @@
         </button>
 
       </div>
-    </div><!-- /seating -->
+    </div>
 
-    <!-- EXTENSIONS -->
+    <!-- EXTENSIONS (No Ottoman first) -->
     <div class="panel-section">
       <span class="section-label">Extensions</span>
       <div class="option-grid" role="list">
+
+        <button class="option-card" id="card-no-ottoman" role="listitem"
+                data-action="no-ottoman" aria-label="No Ottoman">
+          <div class="option-card-preview">
+            <svg width="46" height="34" viewBox="0 0 58 44" fill="none">
+              <rect x="1" y="1" width="56" height="42" rx="5" stroke="#c0b8b0" stroke-width="1.5" stroke-dasharray="5 3" fill="none"/>
+              <line x1="10" y1="10" x2="48" y2="34" stroke="#c0b8b0" stroke-width="1.5"/>
+              <line x1="48" y1="10" x2="10" y2="34" stroke="#c0b8b0" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span class="option-card-label">No Ottoman</span>
+        </button>
 
         <button class="option-card" role="listitem" data-type="ottoman" aria-label="Add Ottoman">
           <div class="option-card-preview">
@@ -744,19 +648,8 @@
           <span class="option-card-label">Ottoman</span>
         </button>
 
-        <button class="option-card" id="card-no-ottoman" role="listitem" data-action="no-ottoman" aria-label="No Ottoman — remove all ottomans">
-          <div class="option-card-preview">
-            <svg width="46" height="34" viewBox="0 0 58 44" fill="none">
-              <rect x="1" y="1" width="56" height="42" rx="5" stroke="#c0b8b0" stroke-width="1.5" stroke-dasharray="5 3" fill="none"/>
-              <line x1="10" y1="10" x2="48" y2="34" stroke="#c0b8b0" stroke-width="1.5"/>
-              <line x1="48" y1="10" x2="10" y2="34" stroke="#c0b8b0" stroke-width="1.5"/>
-            </svg>
-          </div>
-          <span class="option-card-label">No Ottoman</span>
-        </button>
-
       </div>
-    </div><!-- /extensions -->
+    </div>
 
     <!-- FABRIC -->
     <div class="panel-section">
@@ -796,7 +689,7 @@
         </button>
 
       </div>
-    </div><!-- /fabric -->
+    </div>
 
   </div><!-- /panel-content -->
 
@@ -804,29 +697,31 @@
   <div class="chat-section">
     <button class="chat-toggle" id="btn-chat-toggle"
             aria-expanded="false" aria-controls="chat-body-wrap">
-      <span class="chat-diamond" aria-hidden="true">◆</span>
+      <span class="chat-star" aria-hidden="true">✦</span>
       <span>CHAT</span>
       <span class="material-symbols-outlined chat-chevron" aria-hidden="true">keyboard_arrow_up</span>
     </button>
     <div class="chat-body-wrap" id="chat-body-wrap" role="region" aria-label="Chat">
       <div class="chat-body">
         <div class="chat-messages" id="chat-messages">
-          <p class="chat-placeholder" id="chat-placeholder">Ask anything about your sofa configuration…</p>
+          <div class="chat-bubble chat-bubble--system" id="chat-greeting">
+            Hi! 👋 How can I assist you today? You can ask me to change modules, fabrics, and more.
+          </div>
         </div>
         <div class="chat-input-row">
           <input type="text" class="chat-input" id="chat-input"
-                 placeholder="Message…" aria-label="Chat message"/>
+                 placeholder="Type a message…" aria-label="Chat message"/>
           <button class="chat-send" id="chat-send" aria-label="Send message">
-            <span class="material-symbols-outlined">send</span>
+            <span class="material-symbols-outlined">arrow_upward</span>
           </button>
         </div>
       </div>
     </div>
   </div>
 
-</aside><!-- /panel -->
+</aside>
 
-<!-- ===== TOOLBAR (top-right floating) ===== -->
+<!-- ===== TOOLBAR (top-right) ===== -->
 <div class="toolbar-panel" role="toolbar" aria-label="Canvas tools">
 
   <div class="view-toggle" role="group" aria-label="View mode">
@@ -836,33 +731,30 @@
 
   <div class="toolbar-divider" role="separator"></div>
 
-  <button class="icon-btn" id="btn-move-left"
-          data-tooltip="Move Left" title="Move Left" aria-label="Move module left" disabled>
-    <span class="material-symbols-outlined">chevron_left</span>
+  <button class="icon-btn" id="btn-undo"
+          data-tooltip="Undo" title="Undo" aria-label="Undo" disabled>
+    <span class="material-symbols-outlined">undo</span>
   </button>
-  <button class="icon-btn" id="btn-move-right"
-          data-tooltip="Move Right" title="Move Right" aria-label="Move module right" disabled>
-    <span class="material-symbols-outlined">chevron_right</span>
-  </button>
-  <button class="icon-btn" id="btn-rotate"
-          data-tooltip="Rotate" title="Rotate" aria-label="Rotate module" disabled>
-    <span class="material-symbols-outlined">rotate_right</span>
-  </button>
-  <button class="icon-btn icon-btn--danger" id="btn-delete"
-          data-tooltip="Delete" title="Delete" aria-label="Delete module" disabled>
-    <span class="material-symbols-outlined">delete</span>
+  <button class="icon-btn" id="btn-redo"
+          data-tooltip="Redo" title="Redo" aria-label="Redo" disabled>
+    <span class="material-symbols-outlined">redo</span>
   </button>
 
   <div class="toolbar-divider" role="separator"></div>
 
-  <button class="icon-btn is-active" id="btn-snap"
-          data-tooltip="Snap to Grid" title="Snap to Grid"
-          aria-label="Toggle snap to grid" aria-pressed="true">
-    <span class="material-symbols-outlined">grid_4x4</span>
+  <button class="icon-btn" id="btn-reset-camera"
+          data-tooltip="Reset Camera" title="Reset Camera" aria-label="Reset camera">
+    <span class="material-symbols-outlined">center_focus_strong</span>
   </button>
-  <button class="icon-btn" id="btn-reset"
-          data-tooltip="Reset" title="Reset" aria-label="Reset configuration">
-    <span class="material-symbols-outlined">restart_alt</span>
+  <button class="icon-btn is-active" id="btn-dimension"
+          data-tooltip="Dimensions" title="Dimensions"
+          aria-label="Toggle dimensions" aria-pressed="true">
+    <span class="material-symbols-outlined">straighten</span>
+  </button>
+  <button class="icon-btn is-active" id="btn-grid"
+          data-tooltip="Grid" title="Grid"
+          aria-label="Toggle grid" aria-pressed="true">
+    <span class="material-symbols-outlined">grid_4x4</span>
   </button>
 
   <div class="toolbar-divider" role="separator"></div>
@@ -873,8 +765,8 @@
 
 </div>
 
-<!-- ===== DIMENSIONS BAR (bottom floating) ===== -->
-<div class="dimensions-bar">
+<!-- ===== DIMENSIONS BAR (bottom-left, hug) ===== -->
+<div class="dimensions-bar" id="dimensions-bar">
   <div class="dim-item">
     <span class="dim-label">Modules</span>
     <span class="dim-value" id="bar-count">4</span>
@@ -887,13 +779,13 @@
     <span class="dim-label">Depth</span>
     <span class="dim-value" id="bar-depth">—</span>
   </div>
-  <div class="dim-item dim-item--right">
+  <div class="dim-item">
     <span class="dim-label">Fabric</span>
     <span class="dim-value" id="bar-fabric">Beige</span>
   </div>
 </div>
 
-<!-- ===== LIVE STATUS ===== -->
+<!-- ===== LIVE STATUS (bottom-right) ===== -->
 <div class="live-status" aria-hidden="true">
   <span class="dim-label">Live Status</span>
   <div class="live-dot"></div>
@@ -962,7 +854,7 @@
   };
   const GAP = 3;
   const PX_TO_IN = 30 / 108;
-  const PANEL_OFFSET = 264 + 12 * 2; // panel width + both gaps
+  const PANEL_OFFSET = 264 + 12 * 2;
 
   // ===== STATE =====
   const state = {
@@ -970,9 +862,51 @@
     fabric: 'beige',
     selected: null,
     viewMode: '2d',
-    snapGrid: true,
+    showGrid: true,
+    showDims: true,
     _uid: 1
   };
+
+  // ===== UNDO / REDO =====
+  const undoStack = [];
+  const redoStack = [];
+
+  function saveState() {
+    undoStack.push({ config: state.config.map(m => ({...m})), fabric: state.fabric });
+    if (undoStack.length > 50) undoStack.shift();
+    redoStack.length = 0;
+    syncUndoRedo();
+  }
+
+  function syncUndoRedo() {
+    document.getElementById('btn-undo').disabled = undoStack.length === 0;
+    document.getElementById('btn-redo').disabled = redoStack.length === 0;
+  }
+
+  function applySnapshot(snap) {
+    state.config = snap.config;
+    state.fabric = snap.fabric;
+    state.selected = null;
+    document.querySelectorAll('.fabric-card').forEach(c => {
+      const on = c.dataset.fabric === state.fabric;
+      c.classList.toggle('is-selected', on);
+      c.setAttribute('aria-checked', String(on));
+    });
+  }
+
+  document.getElementById('btn-undo').addEventListener('click', () => {
+    if (!undoStack.length) return;
+    redoStack.push({ config: state.config.map(m => ({...m})), fabric: state.fabric });
+    applySnapshot(undoStack.pop());
+    render(); syncUndoRedo();
+  });
+
+  document.getElementById('btn-redo').addEventListener('click', () => {
+    if (!redoStack.length) return;
+    undoStack.push({ config: state.config.map(m => ({...m})), fabric: state.fabric });
+    applySnapshot(redoStack.pop());
+    render(); syncUndoRedo();
+  });
 
   function mkMod(type) { return { type, id: `m${state._uid++}`, rotation: 0 }; }
 
@@ -1019,7 +953,7 @@
     });
   }
 
-  // ===== SVG HELPERS =====
+  // ===== SVG =====
   const NS = 'http://www.w3.org/2000/svg';
   function el(tag, attrs) {
     const e = document.createElementNS(NS, tag);
@@ -1027,7 +961,6 @@
     return e;
   }
 
-  // ===== DRAW MODULE =====
   function drawModule(pos, isSelected) {
     const { x, y, dir, mod, def } = pos;
     const f = FABRICS[state.fabric];
@@ -1110,10 +1043,7 @@
     const offY = (ch - asmH * scale) / 2 - minY * scale;
     group.setAttribute('transform', `translate(${offX},${offY}) scale(${scale})`);
 
-    positions.forEach((pos, i) => {
-      const g = drawModule(pos, state.selected === i);
-      group.appendChild(g);
-    });
+    positions.forEach((pos, i) => group.appendChild(drawModule(pos, state.selected === i)));
     syncUI();
   }
 
@@ -1133,22 +1063,11 @@
   function syncUI() {
     const n = state.config.length;
     const dims = calcDims();
-    const fab = FABRICS[state.fabric]?.label || 'Beige';
-    const sel = state.selected;
-
     document.getElementById('bar-count').textContent = n;
-    document.getElementById('bar-width').textContent = dims.w ? `${dims.w}"` : '—';
-    document.getElementById('bar-depth').textContent = dims.d ? `${dims.d}"` : '—';
-    document.getElementById('bar-fabric').textContent = fab;
+    document.getElementById('bar-width').textContent  = dims.w ? `${dims.w}"` : '—';
+    document.getElementById('bar-depth').textContent  = dims.d ? `${dims.d}"` : '—';
+    document.getElementById('bar-fabric').textContent = FABRICS[state.fabric]?.label || 'Beige';
 
-    const hasSelection = sel !== null;
-    const type = hasSelection ? state.config[sel]?.type : null;
-    document.getElementById('btn-move-left').disabled  = !hasSelection || sel === 0;
-    document.getElementById('btn-move-right').disabled = !hasSelection || sel === n - 1;
-    document.getElementById('btn-rotate').disabled     = !hasSelection || !['corner','ottoman'].includes(type);
-    document.getElementById('btn-delete').disabled     = !hasSelection || n <= 2;
-
-    // Ottoman card states
     const hasOttoman = state.config.some(m => m.type === 'ottoman');
     const noOttCard = document.getElementById('card-no-ottoman');
     noOttCard.classList.toggle('is-selected', !hasOttoman);
@@ -1159,8 +1078,7 @@
   let toastTimer;
   function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('is-visible');
+    t.textContent = msg; t.classList.add('is-visible');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('is-visible'), 3200);
   }
@@ -1185,17 +1103,30 @@
     });
   });
 
-  // ===== SNAP GRID =====
-  document.getElementById('btn-snap').addEventListener('click', () => {
-    state.snapGrid = !state.snapGrid;
-    const b = document.getElementById('btn-snap');
-    b.classList.toggle('is-active', state.snapGrid);
-    b.setAttribute('aria-pressed', String(state.snapGrid));
-    document.getElementById('grid-bg').setAttribute('fill', state.snapGrid ? 'url(#grid-dots)' : 'none');
+  // ===== RESET CAMERA =====
+  document.getElementById('btn-reset-camera').addEventListener('click', () => { render(); });
+
+  // ===== DIMENSIONS TOGGLE =====
+  document.getElementById('btn-dimension').addEventListener('click', () => {
+    state.showDims = !state.showDims;
+    const b = document.getElementById('btn-dimension');
+    b.classList.toggle('is-active', state.showDims);
+    b.setAttribute('aria-pressed', String(state.showDims));
+    document.getElementById('dimensions-bar').classList.toggle('is-hidden', !state.showDims);
+  });
+
+  // ===== GRID TOGGLE =====
+  document.getElementById('btn-grid').addEventListener('click', () => {
+    state.showGrid = !state.showGrid;
+    const b = document.getElementById('btn-grid');
+    b.classList.toggle('is-active', state.showGrid);
+    b.setAttribute('aria-pressed', String(state.showGrid));
+    document.getElementById('grid-bg').setAttribute('fill', state.showGrid ? 'url(#grid-dots)' : 'none');
   });
 
   // ===== RESET =====
   function resetConfig() {
+    saveState();
     loadDefault();
     document.querySelectorAll('.fabric-card').forEach(c => {
       const on = c.dataset.fabric === 'beige';
@@ -1204,7 +1135,6 @@
     });
     render();
   }
-  document.getElementById('btn-reset').addEventListener('click', resetConfig);
 
   // ===== MODULE CARDS (add) =====
   document.querySelectorAll('.option-card[data-type]').forEach(card => {
@@ -1212,6 +1142,7 @@
       const test = [...state.config, mkMod(card.dataset.type)];
       const err = validate(test);
       if (err) { showToast(err); return; }
+      saveState();
       state.config.push(mkMod(card.dataset.type));
       state.selected = state.config.length - 1;
       dismissHint();
@@ -1221,23 +1152,21 @@
     card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); add(); } });
   });
 
-  // ===== NO OTTOMAN ACTION =====
+  // ===== NO OTTOMAN =====
   document.getElementById('card-no-ottoman').addEventListener('click', () => {
-    const before = state.config.length;
+    const hasOttoman = state.config.some(m => m.type === 'ottoman');
+    if (!hasOttoman) return;
+    saveState();
     state.config = state.config.filter(m => m.type !== 'ottoman');
-    if (state.config.length < 2 && before > state.config.length) {
-      state.config = state.config.length === 0
-        ? [mkMod('armless'), mkMod('armless')]
-        : [...state.config, mkMod('armless')];
+    if (state.config.length < 2) {
+      state.config.push(mkMod('armless'));
       showToast('Added seat to maintain minimum 2 modules.');
     }
-    if (state.selected !== null && state.selected >= state.config.length) {
-      state.selected = null;
-    }
+    if (state.selected !== null && state.selected >= state.config.length) state.selected = null;
     render();
   });
 
-  // ===== CANVAS CLICK — SELECT =====
+  // ===== CANVAS SELECT =====
   document.getElementById('assembly-group').addEventListener('click', e => {
     const el2 = e.target.closest('[data-idx]');
     if (!el2) { state.selected = null; render(); return; }
@@ -1255,48 +1184,47 @@
       state.selected = state.selected === i ? null : i;
       render();
     }
-    if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); document.getElementById('btn-delete').click(); }
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      e.preventDefault();
+      if (state.selected === null) return;
+      if (state.config.length <= 2) { showToast('Minimum 2 modules required.'); return; }
+      saveState();
+      state.config.splice(state.selected, 1);
+      state.selected = null; render();
+    }
   });
 
   document.getElementById('assembly-svg').addEventListener('click', e => {
     if (e.target.id === 'assembly-svg' || e.target.id === 'grid-bg') { state.selected = null; render(); }
   });
 
-  // ===== TOOLBAR CONTROLS =====
-  document.getElementById('btn-move-left').addEventListener('click', () => {
-    const i = state.selected;
-    if (i === null || i === 0) return;
-    [state.config[i-1], state.config[i]] = [state.config[i], state.config[i-1]];
-    const err = validate(state.config);
-    if (err) { [state.config[i-1], state.config[i]] = [state.config[i], state.config[i-1]]; showToast(err); render(); return; }
-    state.selected = i - 1; render();
-  });
-
-  document.getElementById('btn-move-right').addEventListener('click', () => {
-    const i = state.selected;
-    if (i === null || i >= state.config.length - 1) return;
-    [state.config[i], state.config[i+1]] = [state.config[i+1], state.config[i]];
-    const err = validate(state.config);
-    if (err) { [state.config[i], state.config[i+1]] = [state.config[i+1], state.config[i]]; showToast(err); render(); return; }
-    state.selected = i + 1; render();
-  });
-
-  document.getElementById('btn-rotate').addEventListener('click', () => {
-    if (state.selected === null) return;
-    state.config[state.selected].rotation = (state.config[state.selected].rotation + 90) % 360;
-    render();
-  });
-
-  document.getElementById('btn-delete').addEventListener('click', () => {
-    if (state.selected === null) return;
-    if (state.config.length <= 2) { showToast('Minimum 2 modules required.'); return; }
-    state.config.splice(state.selected, 1);
-    state.selected = null; render();
+  // Delete key on canvas
+  document.addEventListener('keydown', e => {
+    if ((e.key === 'Delete' || e.key === 'Backspace') && state.selected !== null
+        && !document.getElementById('chat-input').matches(':focus')
+        && !document.getElementById('modal-backdrop').classList.contains('is-open')) {
+      e.preventDefault();
+      if (state.config.length <= 2) { showToast('Minimum 2 modules required.'); return; }
+      saveState();
+      state.config.splice(state.selected, 1);
+      state.selected = null; render();
+    }
+    if (e.key === 'Escape') {
+      if (document.getElementById('modal-backdrop').classList.contains('is-open')) closeModal();
+      else if (state.selected !== null) { state.selected = null; render(); }
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+      e.preventDefault(); document.getElementById('btn-undo').click();
+    }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+      e.preventDefault(); document.getElementById('btn-redo').click();
+    }
   });
 
   // ===== FABRIC =====
   document.querySelectorAll('.fabric-card').forEach(card => {
     const pick = () => {
+      saveState();
       state.fabric = card.dataset.fabric;
       document.querySelectorAll('.fabric-card').forEach(c => {
         c.classList.remove('is-selected'); c.setAttribute('aria-checked','false');
@@ -1309,14 +1237,14 @@
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); }
       const cards = Array.from(document.querySelectorAll('.fabric-card'));
       const idx = cards.indexOf(card);
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); const n = cards[(idx+1) % cards.length]; n.focus(); n.click(); }
-      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); const p = cards[(idx-1+cards.length) % cards.length]; p.focus(); p.click(); }
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); const n = cards[(idx+1)%cards.length]; n.focus(); n.click(); }
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); const p = cards[(idx-1+cards.length)%cards.length]; p.focus(); p.click(); }
     });
   });
 
   // ===== CHAT =====
   document.getElementById('btn-chat-toggle').addEventListener('click', () => {
-    const btn = document.getElementById('btn-chat-toggle');
+    const btn  = document.getElementById('btn-chat-toggle');
     const wrap = document.getElementById('chat-body-wrap');
     const isOpen = wrap.classList.toggle('is-open');
     btn.setAttribute('aria-expanded', String(isOpen));
@@ -1332,18 +1260,16 @@
     const msg = input.value.trim();
     if (!msg) return;
     const messages = document.getElementById('chat-messages');
-    const placeholder = document.getElementById('chat-placeholder');
-    if (placeholder) placeholder.remove();
 
-    const userEl = document.createElement('p');
-    userEl.className = 'chat-msg chat-msg--user';
-    userEl.textContent = msg;
-    messages.appendChild(userEl);
+    const userBubble = document.createElement('div');
+    userBubble.className = 'chat-bubble chat-bubble--user';
+    userBubble.textContent = msg;
+    messages.appendChild(userBubble);
 
-    const sysEl = document.createElement('p');
-    sysEl.className = 'chat-msg chat-msg--system';
-    sysEl.textContent = 'Chat integration coming soon.';
-    messages.appendChild(sysEl);
+    const sysBubble = document.createElement('div');
+    sysBubble.className = 'chat-bubble chat-bubble--system';
+    sysBubble.textContent = 'Chat integration coming soon.';
+    messages.appendChild(sysBubble);
 
     messages.scrollTop = messages.scrollHeight;
     input.value = '';
@@ -1381,13 +1307,6 @@
       b.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px">check</span>Copied!';
       setTimeout(() => { b.innerHTML = o; }, 2200);
     });
-  });
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      if (document.getElementById('modal-backdrop').classList.contains('is-open')) closeModal();
-      else if (state.selected !== null) { state.selected = null; render(); }
-    }
   });
 
   let raf;
