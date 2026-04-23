@@ -756,6 +756,11 @@
           aria-label="Toggle grid" aria-pressed="true">
     <span class="material-symbols-outlined">grid_4x4</span>
   </button>
+  <button class="icon-btn" id="btn-fullscreen"
+          data-tooltip="Full Screen" title="Full Screen"
+          aria-label="Toggle full screen">
+    <span class="material-symbols-outlined" id="fullscreen-icon">fullscreen</span>
+  </button>
 
   <div class="toolbar-divider" role="separator"></div>
 
@@ -1122,6 +1127,24 @@
     b.classList.toggle('is-active', state.showGrid);
     b.setAttribute('aria-pressed', String(state.showGrid));
     document.getElementById('grid-bg').setAttribute('fill', state.showGrid ? 'url(#grid-dots)' : 'none');
+  });
+
+  // ===== FULLSCREEN =====
+  document.getElementById('btn-fullscreen').addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    const isFs = !!document.fullscreenElement;
+    const btn = document.getElementById('btn-fullscreen');
+    const icon = document.getElementById('fullscreen-icon');
+    btn.classList.toggle('is-active', isFs);
+    btn.setAttribute('aria-pressed', String(isFs));
+    btn.setAttribute('data-tooltip', isFs ? 'Exit Full Screen' : 'Full Screen');
+    icon.textContent = isFs ? 'fullscreen_exit' : 'fullscreen';
   });
 
   // ===== RESET =====
